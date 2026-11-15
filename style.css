@@ -2,7 +2,7 @@
 /* v1.1: 세로형 게임 레이아웃과 사용자가 제공한 실제 기숙사 배경 */
 .app{max-width:520px;margin:0 auto;padding:12px 12px 30px}
 main{display:flex;flex-direction:column;gap:10px}
-.play{position:relative;top:auto;width:100%;min-height:660px;aspect-ratio:828/1472;margin:0;background-image:linear-gradient(180deg,rgba(9,16,29,.25) 0%,rgba(9,16,29,.04) 28%,rgba(9,16,29,.03) 70%,rgba(9,16,29,.4) 100%),url('assets/backgrounds/dorm-room-user.jpg');background-position:center center;background-size:cover}
+.play{position:relative;top:auto;width:100%;min-height:660px;aspect-ratio:828/1472;margin:0;background-image:linear-gradient(180deg,rgba(9,16,29,.25) 0%,rgba(9,16,29,.04) 28%,rgba(9,16,29,.03) 70%,rgba(9,16,29,.4) 100%),url('assets/backgrounds/dorm-room.jpg');background-position:center center;background-size:cover}
 .characterzone{flex:1;min-height:380px;display:flex;align-items:center;justify-content:center}
 .character img{width:min(48vw,215px);max-height:260px}
 .tabs,.panel{width:100%;grid-column:auto}
@@ -11,3 +11,7 @@ main{display:flex;flex-direction:column;gap:10px}
 .panel{min-height:320px}
 @media(max-width:720px){.app{max-width:520px;padding:9px 9px 24px}.play{min-height:0;aspect-ratio:828/1472;margin:0;background-position:center center}.characterzone{min-height:0;flex:1}.character img{width:min(44vw,195px);max-height:230px}.tapHint{font-size:12px}.tabs{margin:0}.playtop,.playbottom{padding:10px}}
 @media(min-width:721px){.play{max-height:780px;min-height:680px}}
+
+/* v1.2: 화면 방향을 세로형으로 유지하고 실제 업로드된 사진을 선명하게 표시 */
+.play{background-repeat:no-repeat;background-color:#171b25}
+@media(max-width:520px){.app{width:100%;max-width:520px}.play{width:100%;aspect-ratio:828/1472;min-height:0}.character img{filter:drop-shadow(0 0 2px #10131a) drop-shadow(0 7px 11px #000a)}}

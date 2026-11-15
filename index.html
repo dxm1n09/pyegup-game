@@ -1,1 +1,26 @@
-
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172236">
+  <title>폐급 키우기 · 기숙사 편</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header><div><p class="eyebrow">현대청운고 기숙사 방치형 게임</p><h1>폐급 키우기 <span>· 기숙사 편</span></h1></div><span class="tag">프로토타입 v0.1</span></header>
+    <section class="stats" aria-label="게임 정보">
+      <div class="stat"><span>현재 짬</span><strong id="points">0</strong></div>
+      <div class="stat"><span>레벨</span><strong id="level">1 / 750</strong></div>
+      <div class="stat"><span>학년</span><strong id="grade">1학년</strong></div>
+      <div class="stat"><span>초당 수익</span><strong id="per-second">0</strong></div>
+    </section>
+    <section class="room" aria-label="기숙사 방"><div class="window">☾<small>기숙사 창문</small></div><div class="shelf">📚　🧻　📦</div><button id="tap" class="character" aria-label="캐릭터를 눌러 짬 획득">🧑‍🎓<span>터치해서 짬 획득!</span></button><div class="bed">🛏️</div></section>
+    <p id="status" class="status" role="status">캐릭터를 눌러 짬을 모아 보세요.</p>
+    <section class="upgrades"><h2>성장 상점</h2><div class="upgrade"><div><strong>터치 강화</strong><p>터치당 +1 짬 · 현재 <span id="tap-power">1</span> 짬</p></div><button id="buy-tap">구매 · <span id="tap-cost">10</span> 짬</button></div><div class="upgrade"><div><strong>자동 수익</strong><p>초당 +1 짬 · 현재 <span id="auto-power">0</span> 짬/초</p></div><button id="buy-auto">구매 · <span id="auto-cost">25</span> 짬</button></div></section>
+    <footer><button id="reset" class="text-button">저장 데이터 초기화</button><span>이 브라우저에 자동 저장 · 서버 계정 저장 아님</span></footer>
+  </main>
+</body>
+</html>

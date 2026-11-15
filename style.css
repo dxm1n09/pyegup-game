@@ -8,3 +8,6 @@ body{background:#f0e7d7;color:#29231f}header small,footer{color:#726c62}h1 em{co
 #character-display{pointer-events:none;touch-action:none}
 #tap .float{white-space:nowrap;transform:translate(-50%,-10px);animation:roomFloat .65s ease-out forwards}
 @keyframes roomFloat{to{transform:translate(-50%,-75px);opacity:0}}
+.photo-placeholder[hidden] {
+  display: none !important;
+}

@@ -16,7 +16,32 @@ function renderArtifacts(){const shop=$('artifact-shop'),col=$('artifact-collect
 function renderAchievements(){const el=$('achievement-collection');el.replaceChildren();for(const a of ACHIEVEMENTS){const owned=state.achievements.includes(a.id),card=document.createElement('div');card.className='collect'+(owned?'':' locked');const title=document.createElement('b'),sub=document.createElement('span');title.textContent=owned?a.name:'?';sub.textContent=owned?a.desc:'미달성 업적';card.append(title,sub);el.append(card)}}
 function save(){try{state.lastSaved=Date.now();localStorage.setItem(SAVE_KEY,JSON.stringify(state))}catch{$('status').textContent='저장 실패: 브라우저 저장 공간을 확인하세요.'}}
 function earn(n){state.points+=n;state.totalEarned+=n;unlock();render()}
-$('tap').addEventListener('click',e=>{const n=tapIncome();earn(n);save();const span=document.createElement('span');span.className='float';span.textContent='+'+fmt(n);span.style.left=(e.clientX-$('tap').getBoundingClientRect().left)+'px';span.style.top='10px';$('tap').append(span);setTimeout(()=>span.remove(),650)});
+// Each new finger counts once. At most eight simultaneous contacts are credited.
+const activeTouches=new Set();
+const room=$('tap');
+function showTapNumber(x,y,n){
+  const rect=room.getBoundingClientRect();
+  const span=document.createElement('span');
+  span.className='float';span.textContent='+'+fmt(n);
+  span.style.left=(x-rect.left)+'px';span.style.top=(y-rect.top)+'px';
+  room.append(span);setTimeout(()=>span.remove(),650);
+}
+room.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  if(activeTouches.has(e.pointerId)||activeTouches.size>=8)return;
+  activeTouches.add(e.pointerId);
+  const n=tapIncome();earn(n);save();showTapNumber(e.clientX,e.clientY,n);
+  const character=$('character-display');
+  character.classList.remove('hit');void character.offsetWidth;character.classList.add('hit');
+  if(e.cancelable)e.preventDefault();
+});
+function releasePointer(e){activeTouches.delete(e.pointerId)}
+room.addEventListener('pointerup',releasePointer);
+room.addEventListener('pointercancel',releasePointer);
+room.addEventListener('lostpointercapture',releasePointer);
+window.addEventListener('pointerup',releasePointer);
+window.addEventListener('pointercancel',releasePointer);
+window.addEventListener('blur',()=>activeTouches.clear());
 $('buy-tap').addEventListener('click',()=>{const cost=tapCost();if(state.points<cost)return;state.points-=cost;state.tapUpgrades++;state.tapPower++;save();render()});$('buy-auto').addEventListener('click',()=>{const cost=autoCost();if(state.points<cost)return;state.points-=cost;state.autoUpgrades++;state.autoPower++;unlock();save();render()});
 document.querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+btn.dataset.tab))}));
 $('reset').addEventListener('click',()=>{if(!confirm('현재 브라우저의 모든 게임 진행 상황을 초기화할까요?'))return;state=fresh();save();render();$('status').textContent='게임을 초기화했습니다.'});
@@ -30,4 +55,4 @@ photo.addEventListener('load',()=>{photo.hidden=false;$('avatar-fallback').hidde
 const bg=new Image();
 bg.onload=()=>{$('photo-placeholder').hidden=true};
 bg.src='assets/backgrounds/dorm-room.jpg';
-$('tap').addEventListener('click',()=>{const el=$('tap');el.classList.remove('hit');void el.offsetWidth;el.classList.add('hit')});
+

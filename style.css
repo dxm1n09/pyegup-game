@@ -311,3 +311,47 @@ html body .story-controls button:nth-child(3){background:#c9b0ff!important}
 html body .authGate .authCard{background:#fff1cb!important;color:#242424!important}
 html body .authGate .authCard button{background:#ffb35e!important;color:#242424!important}
 html body dialog{background:#fff1cb!important;color:#242424!important}
+
+/* Reference screenshot palette: black header, slate HUD, gray chrome, cream cards, bright yellow/green highlights. */
+html body,html body .app{background:#bdbdbd!important;color:#111!important}
+html body .app{padding:0 8px 22px!important}
+html body .app .top{background:#050505!important;padding:12px 10px!important;margin:0!important}
+html body .app .top h1,html body .app .top small{color:#fff!important}
+html body .app .top em{color:#ffe600!important}
+html body .app .top .iconbtn{background:#ffeb00!important;color:#111!important}
+html body .app .hud{background:#344456!important;padding:7px!important;gap:5px!important;margin:0!important}
+html body .app .hud>div,html body .app .hud>div:nth-child(n){background:#344456!important;padding:6px!important}
+html body .app .hud span{color:#a9ffbd!important}
+html body .app .hud strong{color:#ffeb00!important}
+html body .app .play{border:3px solid #333!important}
+html body .app .playtop{background:#ffda57!important;color:#111!important}
+html body .app .playbottom{background:#888!important;color:#fff!important}
+html body .app .pill{background:#ffdc59!important;color:#111!important}
+html body .app .playtop>.comboBox{background:#ffda57!important;color:#111!important}
+html body .app .playtop .comboTrack{background:#343434!important}
+html body .app .play #comboFill{background:#9bff70!important}
+html body .app .tabs{background:#aaa!important;padding:7px!important;gap:6px!important}
+html body .app .tabs button,html body .app .tabs button:nth-child(n){background:#f5dfb4!important;color:#111!important;border:2px solid #f9f9f9!important;font-weight:800!important}
+html body .app .tabs button[data-tab="friends"]{background:#9cff79!important}
+html body .app .tabs button[data-tab="growth"]{background:#ffe06e!important}
+html body .app .tabs button[data-tab="relics"]{background:#ffeb00!important}
+html body .app .tabs button.active{background:#ffeb00!important;color:#111!important;border:2px solid #171717!important}
+html body .app .panel{background:#bdbdbd!important;padding:7px!important}
+html body .app .panelhead{background:#888!important;color:#fff!important;padding:8px!important}
+html body .app .panelhead h2,html body .app .panelhead p,html body .app .panelhead>span{color:#fff!important}
+html body .app .item,html body .app .item:nth-child(n){background:#f5e1b9!important;border:2px solid #555!important;margin:4px 0!important;padding:12px 9px!important}
+html body .app .iteminfo strong,html body .app .iteminfo p{color:#171717!important}
+html body .app .item button,html body .app .bigbutton{background:#ffe000!important;color:#111!important;border:2px solid #222!important}
+html body .app .item button:disabled,html body .app .bigbutton:disabled{background:#c6c6c6!important;color:#666!important;border:2px solid #888!important}
+html body .app .note{background:#f6dfb5!important;color:#222!important}
+html body .app .archive-row,html body .app .archive-row:nth-child(n){background:#f5e1b9!important;border:2px solid #555!important;margin:4px 0!important}
+html body .app .archive-button{background:#f6dfb5!important;color:#111!important;border:2px solid #777!important}
+html body .app .archive-button.selected{background:#ffeb00!important;color:#111!important;border:2px solid #222!important}
+html body .story-paper{background:#fff0cb!important;color:#111!important;border:3px solid #111!important}
+html body .story-title-row{background:#fff0cb!important}
+html body .story-controls button{background:#e4e4e4!important;color:#111!important;border:2px solid #fff!important}
+html body .story-controls button:nth-child(2){background:#ffdd65!important}
+html body .story-controls button:nth-child(3){background:#d4d4d4!important}
+html body .authGate .authCard,html body dialog{background:#f5dfb5!important;color:#111!important;border:3px solid #333!important}
+html body .authGate .authCard button{background:#ffe000!important;color:#111!important}
+html body .app .top,html body .app .hud,html body .app .tabs,html body .app .panel,html body .app .item,html body .app .archive-row{border-radius:0!important}

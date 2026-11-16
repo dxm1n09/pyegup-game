@@ -18,3 +18,7 @@ main{display:flex;flex-direction:column;gap:10px}
 
 /* v1.3: 배경 전체 터치 영역 */
 .play{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+
+/* 친구 사진 목록: assets/friends/friend01.png ~ friend17.png */
+.friend-photo{width:64px;height:72px;object-fit:contain;flex:0 0 64px;filter:drop-shadow(0 0 1.5px #070b12) drop-shadow(0 2px 4px #0008)}
+@media(max-width:390px){.friend-photo{width:48px;height:58px;flex-basis:48px}}

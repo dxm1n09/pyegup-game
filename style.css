@@ -49,6 +49,9 @@ main{display:flex;flex-direction:column;gap:10px}
 @keyframes dormIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @media(max-width:520px){.play .characterzone{min-height:300px}.play .character img{width:clamp(75px,25%,115px);max-height:135px}.dormFriend{width:clamp(40px,13%,65px);height:clamp(49px,17%,78px)}}
 
+/* HD portraits: never revert to the compressed sprite during rerenders. */
+.friend-photo:not(.friend-locked),.dormFriendImage{background-image:none;background-size:contain;background-position:center;background-repeat:no-repeat}
+
 /* v1.8: 터치 콤보 게이지 */
 .playtop .comboBox{flex:1;min-width:150px;max-width:240px;display:flex;flex-direction:column;gap:5px}
 .comboMeta{display:flex;align-items:center;justify-content:space-between;gap:6px}.comboMeta #comboNext{font-size:11px;font-weight:800;color:#fff5cc;white-space:nowrap}

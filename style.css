@@ -438,3 +438,5 @@ html body .app .play .bonus-portrait{display:none!important}
 /* Keep the game at fixed visual scale on touch screens. */
 html,body,.app{touch-action:pan-y!important;-webkit-text-size-adjust:100%!important;text-size-adjust:100%!important}
 button,.character,.dormFriend{touch-action:manipulation!important}
+
+.floatJam{display:inline-flex!important;align-items:center!important;gap:3px!important}.floatLogo{display:inline-block!important;width:22px!important;height:22px!important;object-fit:contain!important;vertical-align:middle!important}

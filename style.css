@@ -70,3 +70,6 @@ main{display:flex;flex-direction:column;gap:10px}
 .friend-photo:not(.friend-locked){image-rendering:auto;-webkit-backface-visibility:hidden;backface-visibility:hidden;filter:drop-shadow(0 1px 2px #0007)!important;background-color:transparent!important}
 .dormFriend{filter:drop-shadow(0 1px 2px #0009)!important}
 .dormFriendImage{image-rendering:auto;backface-visibility:hidden;transform:translateZ(0)}
+
+/* Original portrait PNGs: keep proportions, transparency and native interpolation */
+.friend-photo:not(.friend-locked),.dormFriendImage{background-repeat:no-repeat;image-rendering:auto}

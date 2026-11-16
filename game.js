@@ -351,16 +351,28 @@ $('storySkip').onclick=()=>{storyPage=null;save();renderStoryViewer()};
 $('storyPrev').onclick=()=>{if(storyPage&&storyPage.scene>0){storyPage.scene--;renderStoryViewer()}};
 $('storyNext').onclick=()=>{if(!storyPage)return;const idx=storyPage.chapter;if(storyPage.scene<storyChapters[idx].scenes.length-1){storyPage.scene++;renderStoryViewer()}else{if(!s.storyRead.includes(idx))s.storyRead.push(idx);storyPage=null;save();render();renderStoryViewer()}};
 $('resetBtn').onclick=()=>{if(!confirm('모든 게임 진행 상황을 초기화할까요?'))return;localStorage.removeItem(KEY);localStorage.removeItem(OLD);s=initial();$('settings').close();render();msg('게임을 초기화했습니다')};
-const away=Math.max(0,Math.min(MAX_AWAY,(Date.now()-s.last)/1000));if(away>10){const gained=Math.floor(autoGain()*away*OFFLINE);earn(gained);if(gained>0)msg('오프라인 수익 +'+fmt(gained)+' 짬 (경과 분 × 0.7 × 초당 수익)')}
+function showOfflineReward(gained,seconds){
+ const modal=$('offlineReward');if(!modal)return;
+ $('offlineAmount').textContent='+'+fmt(gained)+' 짬';
+ $('offlineDuration').textContent='자리 비운 시간: '+(seconds>=3600?Math.floor(seconds/3600)+'시간 '+Math.floor(seconds%3600/60)+'분':seconds>=60?Math.floor(seconds/60)+'분':'1분 미만');
+ modal.hidden=false;
+}
+$('offlineClose').onclick=()=>{$('offlineReward').hidden=true};
+function collectOfflineReward(seconds){
+ const gained=Math.floor(autoGain()*seconds*OFFLINE);
+ if(gained>0)earn(gained);
+ showOfflineReward(gained,seconds);
+ return gained;
+}
 let hiddenSince=document.hidden?Date.now():null;
 lastFrame=Date.now();setInterval(()=>{const now=Date.now(),dt=Math.min(5,(now-lastFrame)/1000);lastFrame=now;if(document.hidden)return;if(lastTap&&now-lastTap>650&&streak>0){streak=Math.max(0,streak-24*dt);updateComboUI();$('tapIncome').textContent=fmt(tapGain()*combo())}earn(autoGain()*dt);if(now-renderAt>950){render();maybeOpenStory()}},200);
-setInterval(()=>{if(!document.hidden)save()},15000);document.addEventListener('visibilitychange',()=>{if(document.hidden){save();hiddenSince=Date.now()}else{const now=Date.now(),away=Math.max(0,(now-(hiddenSince??s.last))/1000);if(away>5){const gained=Math.floor(autoGain()*(away/60)*.7);earn(gained);if(gained>0)msg('오프라인 수익 +'+fmt(gained)+' 짬')}hiddenSince=null;lastFrame=now;render()}});window.addEventListener('pagehide',save);render();markPreviouslyUnlockedStories();save();
+setInterval(()=>{if(!document.hidden)save()},15000);document.addEventListener('visibilitychange',()=>{if(document.hidden){save();hiddenSince=Date.now()}else{const now=Date.now(),away=Math.max(0,(now-(hiddenSince??s.last))/1000);if(away>5)collectOfflineReward(away);hiddenSince=null;lastFrame=now;render();save()}});window.addEventListener('pagehide',save);render();markPreviouslyUnlockedStories();save();
 
 /* Account bridge: Firebase authentication and cloud sync are initialized separately. */
 window.pyegupAccount={
  getLocal:()=>{try{return JSON.parse(localStorage.getItem(KEY))}catch{return null}},
- loadCloud:data=>{if(!data||typeof data!=='object')return;localStorage.setItem(KEY,JSON.stringify(data));s=load();const away=Math.max(0,(Date.now()-s.last)/1000);if(away>10){const gained=Math.floor(autoGain()*(away/60)*.7);earn(gained);if(gained>0)msg('오프라인 수익 +'+fmt(gained)+' 짬')}s.last=Date.now();streak=0;lastFrame=Date.now();render();markPreviouslyUnlockedStories();window.pyegupCloud?.queueSave?.(structuredClone(s))},
- resetForAccount:()=>{s=initial();markPreviouslyUnlockedStories();streak=0;lastFrame=Date.now();render()},
+ loadCloud:data=>{if(!data||typeof data!=='object')return;localStorage.setItem(KEY,JSON.stringify(data));s=load();const away=Math.max(0,Math.min(MAX_AWAY,(Date.now()-s.last)/1000));collectOfflineReward(away);s.last=Date.now();streak=0;lastFrame=Date.now();render();markPreviouslyUnlockedStories();window.pyegupCloud?.queueSave?.(structuredClone(s))},
+ resetForAccount:()=>{$('offlineReward').hidden=true;s=initial();markPreviouslyUnlockedStories();streak=0;lastFrame=Date.now();render()},
  snapshot:()=>structuredClone(s),
  saveNow:()=>save()
 };

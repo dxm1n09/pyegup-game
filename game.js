@@ -111,7 +111,24 @@ $('play').addEventListener('touchend',event=>{
   if(now-lastGameTouchEnd<350&&event.cancelable)event.preventDefault();
   lastGameTouchEnd=now;
 },{passive:false});
-$('play').addEventListener('pointerdown',e=>{if(e.target.closest('a, input, select, textarea, button:not(#tap)'))return;e.preventDefault();tap(e)});
+function reactToCharacterTouch(target){
+  const friend=target.closest('.dormFriend');
+  const main=target.closest('.character');
+  const actor=friend||main;
+  if(!actor)return;
+  const figure=friend?friend.querySelector('.friendPortraitPng'):main.querySelector('img');
+  if(!figure)return;
+  // Restart each press immediately, even during very fast combo tapping.
+  figure.getAnimations().forEach(animation=>{if(animation.id==='character-tap-reaction')animation.cancel()});
+  const animation=figure.animate([
+    {transform:'translateY(0) scale(1) rotate(0deg)'},
+    {transform:'translateY(-9px) scale(1.13) rotate(-5deg)',offset:.35},
+    {transform:'translateY(2px) scale(.96) rotate(3deg)',offset:.7},
+    {transform:'translateY(0) scale(1) rotate(0deg)'}
+  ],{duration:280,easing:'ease-out'});
+  animation.id='character-tap-reaction';
+}
+$('play').addEventListener('pointerdown',e=>{if(e.target.closest('a, input, select, textarea, button:not(#tap)'))return;e.preventDefault();reactToCharacterTouch(e.target);tap(e)});
 $('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(!b)return;tab=b.dataset.tab;document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));render()});
 $('settingsBtn').onclick=()=>$('settings').showModal();
 $('resetBtn').onclick=()=>{if(!confirm('모든 게임 진행 상황을 초기화할까요?'))return;localStorage.removeItem(KEY);localStorage.removeItem(OLD);s=initial();$('settings').close();render();msg('게임을 초기화했습니다')};

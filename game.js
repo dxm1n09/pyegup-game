@@ -35,12 +35,13 @@ const placePrices=[1e15,5e15+1e8+5676e4,1e16,5e16,1e17,99e16+9999e12+9573e8,1e19
 const powerNames=['반장','학생회장','기숙사 사감','학년부장','교감','교장','현대청운고 이사장'];
 const powerPrices=[1e20,2e20,3e20,5e20,1e21,2e21,3e21],powerIncome=[1e14,2e14,3e14,5e14,1e15,2e15,3e15];
 const relics=[{name:'주인 없는 청운티',price:1e7,type:'tap',bonus:.03},{name:'3년 묵은 양말',price:2e7,type:'auto',bonus:.05},{name:'정갈하게 부러진 옷걸이',price:4e7,type:'tap',bonus:.06},{name:'봉인된 너구리 스프',price:7e7,type:'auto',bonus:.08},{name:'김승훈의 갈색 여치',price:1e8,type:'all',bonus:.07}];
-const titles={growth:['성장','터치 강화와 자동 수익을 키우세요.'],friends:['친구','이전 친구 Lv.10 달성 시 다음 친구 해금'],zones:['학교 구역','구매 후 가치가 초당 상승합니다.'],collect:['수집품','수집품을 모으고 되팔 수 있습니다.'],gifts:['친구들의 선물','해당 친구 Lv.30 달성 시 구매 가능'],clubs:['동아리 지배','동아리를 차례로 인수하세요.'],places:['학교 주변 시설','학교 주변 시설을 차례로 확보하세요.'],power:['학교 권력','최상위 초당 수익 콘텐츠'],relics:['유물','확인된 유물 5종만 우선 수록'],prestige:['재입학','레벨을 초기화하고 영구 보너스를 얻습니다.']};
-const initial=()=>({money:0,total:0,runEarned:0,tapLevel:0,autoLevel:0,friends:Array(17).fill(0),zones:{},collect:{},gifts:[],clubs:[],places:[],power:[],relics:[],prestiges:0,mana:0,taps:0,last:Date.now()});
+const titles={growth:['성장','터치 강화와 자동 수익을 키우세요.'],friends:['친구','이전 친구 Lv.10 달성 시 다음 친구 해금'],zones:['학교 구역','구매 후 가치가 초당 상승합니다.'],collect:['수집품','수집품을 모으고 되팔 수 있습니다.'],gifts:['친구들의 선물','해당 친구 Lv.30 달성 시 구매 가능'],clubs:['동아리 지배','구매 후 판매 가치가 초당 상승합니다. 판매 후 정가로 재구매할 수 있습니다.'],places:['학교 주변 시설','보유하는 동안 판매 가치가 상승하며, 판매 후 정가로 재구매합니다.'],power:['학교 권력','보유 시 판매 가치가 초당 상승합니다.'],relics:['유물','확인된 유물 5종만 우선 수록'],prestige:['재입학','레벨을 초기화하고 영구 보너스를 얻습니다.']};
+const initial=()=>({money:0,total:0,runEarned:0,tapLevel:0,autoLevel:0,friends:Array(17).fill(0),zones:{},collect:{},gifts:[],clubs:[],places:[],power:[],assetBoughtAt:{clubs:{},places:{},power:{}},relics:[],prestiges:0,mana:0,taps:0,last:Date.now()});
 function load(){let raw;try{raw=JSON.parse(localStorage.getItem(KEY))}catch{};let s=initial();if(raw&&typeof raw==='object'){
  for(const k of ['money','total','runEarned','tapLevel','autoLevel','prestiges','mana','taps','last'])if(Number.isFinite(raw[k])&&raw[k]>=0)s[k]=raw[k];
  if(Array.isArray(raw.friends))s.friends=s.friends.map((_,i)=>Number.isFinite(raw.friends[i])?Math.max(0,Math.floor(raw.friends[i])):0);
  for(const k of ['gifts','clubs','places','power','relics'])if(Array.isArray(raw[k]))s[k]=[...new Set(raw[k].filter(x=>Number.isInteger(x)&&x>=0&&x<({gifts:17,clubs:15,places:10,power:7,relics:5}[k])))];
+ for(const k of ['clubs','places','power']){const src=raw.assetBoughtAt?.[k];for(const i of s[k])s.assetBoughtAt[k][i]=(src&&Number.isFinite(src[i])&&src[i]>0)?src[i]:(Number.isFinite(raw.last)?raw.last:Date.now());}
  for(const k of ['zones','collect'])if(raw[k]&&typeof raw[k]==='object')for(const [i,v] of Object.entries(raw[k]))if(Number.isInteger(+i)&&Number.isFinite(v)&&v>0)s[k][i]=v;
  }else{try{const old=JSON.parse(localStorage.getItem(OLD));if(old){s.money=Math.max(0,old.points||0);s.total=Math.max(0,old.totalEarned||0);s.runEarned=s.total;s.tapLevel=Math.max(0,old.tapUpgrades||0);s.autoLevel=Math.max(0,old.autoUpgrades||0);}}catch{}}
  return s;
@@ -58,7 +59,9 @@ const giftTapBonus=()=>s.gifts.reduce((m,i)=>m+giftBonuses[i]/100,1);
 const permanent=()=>1+s.prestiges*.1;
 const tapGain=()=>safe(Math.floor(baseTap()*friendTapBonus()*giftTapBonus()*bonusRelic('tap')*permanent()));
 const friendIncome=()=>s.friends.reduce((m,l,i)=>m+(l?friendPrices[i]/100*Math.pow(1.12,l-1)*l:0),0);
-const autoGain=()=>safe(Math.floor((friendIncome()+s.power.reduce((m,i)=>m+powerIncome[i],0))*bonusRelic('auto')*permanent()*(1+s.clubs.length*.02+s.places.length*.03)));
+const autoGain=()=>safe(Math.floor(friendIncome()*bonusRelic('auto')*permanent()));
+const assetRates={clubs:.02,places:.03,power:.05};
+const assetValue=(category,i,price)=>safe(price+price*assetRates[category]*Math.max(0,(Date.now()-(s.assetBoughtAt?.[category]?.[i]||Date.now()))/1000));
 const COMBO_LIMITS=[0,80,280,550,820];
 const combo=()=>streak>=820?1.5:streak>=550?1.4:streak>=280?1.3:streak>=80?1.2:1;
 function updateComboUI(){const tier=streak>=820?4:streak>=550?3:streak>=280?2:streak>=80?1:0;const low=COMBO_LIMITS[tier],high=COMBO_LIMITS[Math.min(4,tier+1)];const progress=tier===4?100:Math.max(0,Math.min(100,(streak-low)/(high-low)*100));$('comboTag').textContent='콤보 ×'+combo().toFixed(1);$('comboFill').style.width=progress+'%';$('comboNext').textContent=tier===4?'최대 콤보':'다음 ×'+(1.2+tier*.1).toFixed(1);}
@@ -79,7 +82,12 @@ function drawItems(){const el=$('items');el.replaceChildren();$('panelTitle').te
  else if(tab==='gifts')giftNames.forEach((name,i)=>{const owned=s.gifts.includes(i),unlock=s.friends[i]>=30;addItem(unlock?friendNames[i]+' · '+name:(i+1)+'. ???',unlock?`터치 보너스 +${giftBonuses[i]}%`:'??? · 해당 친구 Lv.30 달성 시 공개',!unlock?'???':owned?'보유 중':'구매 '+fmt(giftPrices[i]),()=>actionBuy(giftPrices[i],()=>s.gifts.push(i),name+' 획득'),owned||!unlock||s.money<giftPrices[i])});
  else if(tab==='clubs'||tab==='places'||tab==='power'){
  const names=tab==='clubs'?clubNames:tab==='places'?placeNames:powerNames,prices=tab==='clubs'?clubPrices:tab==='places'?placePrices:powerPrices;
- names.forEach((name,i)=>{const owned=s[tab].includes(i),unlock=i===0||s[tab].includes(i-1);const desc=tab==='power'?'초당 +'+fmt(powerIncome[i])+' 짬':tab==='clubs'?'보유 시 자동 수익 +2% (임시 밸런스)':'보유 시 자동 수익 +3% (임시 밸런스)';addItem(name,desc,owned?'보유 중':unlock?'구매 '+fmt(prices[i]):'이전 항목 필요',()=>actionBuy(prices[i],()=>s[tab].push(i),name+' 인수'),owned||!unlock||s.money<prices[i])});
+ names.forEach((name,i)=>{const owned=s[tab].includes(i),unlock=i===0||s[tab].includes(i-1),price=prices[i],value=owned?assetValue(tab,i,price):price,rate=price*assetRates[tab];
+ addItem(name,owned?'현재 판매 가치 '+fmt(value)+' 짬 · 초당 가치 +'+fmt(rate):'정가 '+fmt(price)+' 짬 · 초당 가치 +'+fmt(rate),owned?'판매 '+fmt(value):unlock?'구매 '+fmt(price):'이전 항목 필요',()=>{
+ if(owned){earn(assetValue(tab,i,price));s[tab]=s[tab].filter(x=>x!==i);delete s.assetBoughtAt[tab][i];msg(name+' 판매 완료');save();render()}
+ else actionBuy(price,()=>{s[tab].push(i);s.assetBoughtAt[tab][i]=Date.now()},name+' 구매');
+ },!owned&&(!unlock||s.money<price));
+ });
  }else if(tab==='relics'){
  const p=document.createElement('p');p.className='note';p.textContent='유물 항아리 · 마나 '+fmt(s.mana)+'개. 터치 1,000회마다 마나 1개 획득. 유물 10종 중 세부 수치가 확인된 5종만 구현되어 있습니다. 마나 획득 규칙은 임시 설정입니다.';el.append(p);
  const b=document.createElement('button');b.className='bigbutton';b.textContent='유물 항아리 1회 뽑기 · 마나 3개';b.disabled=s.mana<3;b.onclick=()=>drawRelic(3,1);el.append(b);

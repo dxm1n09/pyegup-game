@@ -20,7 +20,7 @@ if(!cfg?.url||!cfg?.anonKey||!cfg?.authDomain||!/^https:\/\//.test(cfg.url)||!/^
  async function enter(user){const version=++activeVersion;ready=false;uid=user.id;username=(user.email||'').split('@')[0];lock(true);gate.hidden=false;message('계정 진행 상황 불러오는 중…');
  try{const {data,error}=await sb.from('game_saves').select('state').eq('user_id',user.id).maybeSingle();if(error)throw error;if(version!==activeVersion||uid!==user.id)return;
  if(data?.state)window.pyegupAccount.loadCloud(data.state);else window.pyegupAccount.resetForAccount();
- importBtn.hidden=!legacySave;ready=true;gate.hidden=true;el('logoutBtn').textContent='로그아웃';message('클라우드 연결 완료');void refreshLeaderboard();
+ importBtn.hidden=!legacySave;ready=true;queueSave(window.pyegupAccount.snapshot());gate.hidden=true;el('logoutBtn').textContent='로그아웃';message('클라우드 연결 완료');void refreshLeaderboard();
  }catch(e){message('클라우드 불러오기 실패: '+e.message+' — 데이터 보호를 위해 게임을 잠갔습니다.');ready=false;}finally{lock(false)} }
  async function exit(){++activeVersion;ready=false;uid=null;username='';pending=null;clearTimeout(timer);gate.hidden=false;importBtn.hidden=true;lock(false);message('게임 아이디와 비밀번호로 로그인하세요.')}
  sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT')void exit();else if(event==='INITIAL_SESSION'||event==='SIGNED_IN'){if(session?.user&&(!ready||uid!==session.user.id))void enter(session.user);else if(!session?.user)void exit()}});

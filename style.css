@@ -422,3 +422,7 @@ html body .app .bonus-portrait{position:absolute!important;z-index:21!important;
 html body .app .bonus-status[hidden]{display:none!important}
 html body .app .play.bonus-active .character img{visibility:hidden!important}
 html body .app .play.bonus-active .bonus-portrait{display:block!important;z-index:100!important;left:50%!important;bottom:7%!important;width:56%!important;height:78%!important;object-fit:contain!important;pointer-events:none!important}
+
+/* Bonus Jinsu uses the same dimensions as ordinary dorm friend characters. */
+html body .app .play.bonus-active .bonus-portrait{width:clamp(43px,14%,76px)!important;height:clamp(52px,18%,91px)!important;bottom:17%!important;left:50%!important;object-fit:contain!important;object-position:center bottom!important}
+@media(max-width:520px){html body .app .play.bonus-active .bonus-portrait{width:clamp(40px,13%,65px)!important;height:clamp(49px,17%,78px)!important}}

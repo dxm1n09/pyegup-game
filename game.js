@@ -55,7 +55,7 @@ function updateComboUI(){const tier=streak>=820?4:streak>=550?3:streak>=280?2:st
 function earn(n){if(!Number.isFinite(n)||n<=0)return;s.money=safe(s.money+n);s.total=safe(s.total+n);s.runEarned=safe(s.runEarned+n)}
 function spend(n){if(!Number.isFinite(n)||s.money<n)return false;s.money=Math.max(0,s.money-n);return true}
 function msg(t){$('message').textContent=t}
-function save(){s.last=Date.now();try{localStorage.setItem(KEY,JSON.stringify(s));msg('저장 완료')}catch{msg('저장 공간 부족: 내보내기를 이용하세요')}}
+function save(){s.last=Date.now();try{localStorage.setItem(KEY,JSON.stringify(s));if(window.pyegupCloud?.ready)window.pyegupCloud.queueSave(structuredClone(s));msg('저장 완료')}catch{msg('저장 공간 부족: 내보내기를 이용하세요')}}
 function countOwned(k){return k==='friends'?s.friends.filter(x=>x>0).length:k==='zones'||k==='collect'?Object.keys(s[k]).length:(s[k]?.length||0)}
 function addItem(name,description,buttonText,onClick,disabled=false,imageSrc=null){const row=document.createElement('div');row.className='item';const info=document.createElement('div');info.className='iteminfo';const title=document.createElement('strong');title.textContent=name;const p=document.createElement('p');p.textContent=description;info.append(title,p);if(imageSrc){const photo=document.createElement('span');photo.className='friend-photo';if(imageSrc==='locked'){photo.classList.add('friend-locked');photo.textContent='?';photo.setAttribute('aria-label','미해금 친구');}else if(imageSrc===13){photo.style.backgroundImage="url('assets/characters/cha-jihoon.jpg?v=1')";photo.style.backgroundSize='contain';photo.style.backgroundPosition='center'}else{photo.style.backgroundPosition=`${((imageSrc-1)%4)*100/3}% ${Math.floor((imageSrc-1)/4)*25}%`;}photo.setAttribute('role','img');if(imageSrc!=='locked'){photo.setAttribute('aria-label',friendNames[imageSrc-1]+' 사진');row.append(photo);loadFriendPortrait(imageSrc-1,photo)}else row.append(photo)}const b=document.createElement('button');b.textContent=buttonText;b.disabled=disabled;b.addEventListener('click',onClick);row.append(info,b);$('items').append(row)}
 function actionBuy(price,callback,label){if(!spend(price)){msg('짬이 부족합니다');return}callback();msg(label+' 완료!');save();render()}
@@ -92,3 +92,12 @@ $('resetBtn').onclick=()=>{if(!confirm('모든 게임 진행 상황을 초기화
 const away=Math.max(0,Math.min(MAX_AWAY,(Date.now()-s.last)/1000));if(away>10){const gained=Math.floor(autoGain()*away*OFFLINE);earn(gained);if(gained>0)msg('오프라인 수익 +'+fmt(gained)+' 짬 (7%)')}
 lastFrame=Date.now();setInterval(()=>{const now=Date.now(),dt=Math.min(5,(now-lastFrame)/1000);lastFrame=now;if(lastTap&&now-lastTap>650&&streak>0){streak=Math.max(0,streak-24*dt);updateComboUI();$('tapIncome').textContent=fmt(tapGain()*combo())}earn(autoGain()*dt);if(now-renderAt>950)render()},200);
 setInterval(save,15000);document.addEventListener('visibilitychange',()=>{if(document.hidden)save();else{const now=Date.now(),away=Math.max(0,Math.min(MAX_AWAY,(now-s.last)/1000));if(away>5)earn(Math.floor(autoGain()*away*OFFLINE));lastFrame=now;render()}});window.addEventListener('pagehide',save);render();
+
+/* Account bridge: Firebase authentication and cloud sync are initialized separately. */
+window.pyegupAccount={
+ getLocal:()=>{try{return JSON.parse(localStorage.getItem(KEY))}catch{return null}},
+ loadCloud:data=>{if(!data||typeof data!=='object')return;localStorage.setItem(KEY,JSON.stringify(data));s=load();streak=0;lastFrame=Date.now();render()},
+ resetForAccount:()=>{s=initial();streak=0;lastFrame=Date.now();render()},
+ snapshot:()=>structuredClone(s),
+ saveNow:()=>save()
+};

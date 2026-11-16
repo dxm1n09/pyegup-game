@@ -82,11 +82,11 @@ function drawItems(){const el=$('items');el.replaceChildren();$('panelTitle').te
  else if(tab==='gifts')giftNames.forEach((name,i)=>{const owned=s.gifts.includes(i),unlock=s.friends[i]>=30;addItem(unlock?friendNames[i]+' · '+name:(i+1)+'. ???',unlock?`터치 보너스 +${giftBonuses[i]}%`:'??? · 해당 친구 Lv.30 달성 시 공개',!unlock?'???':owned?'보유 중':'구매 '+fmt(giftPrices[i]),()=>actionBuy(giftPrices[i],()=>s.gifts.push(i),name+' 획득'),owned||!unlock||s.money<giftPrices[i])});
  else if(tab==='clubs'||tab==='places'||tab==='power'){
  const names=tab==='clubs'?clubNames:tab==='places'?placeNames:powerNames,prices=tab==='clubs'?clubPrices:tab==='places'?placePrices:powerPrices;
- names.forEach((name,i)=>{const owned=s[tab].includes(i),unlock=i===0||s[tab].includes(i-1),price=prices[i],value=owned?assetValue(tab,i,price):price,rate=price*assetRates[tab];
- addItem(name,owned?'현재 판매 가치 '+fmt(value)+' 짬 · 초당 가치 +'+fmt(rate):'정가 '+fmt(price)+' 짬 · 초당 가치 +'+fmt(rate),owned?'판매 '+fmt(value):unlock?'구매 '+fmt(price):'이전 항목 필요',()=>{
+ names.forEach((name,i)=>{const owned=s[tab].includes(i),price=prices[i],value=owned?assetValue(tab,i,price):price,rate=price*assetRates[tab];
+ addItem(name,owned?'현재 판매 가치 '+fmt(value)+' 짬 · 초당 가치 +'+fmt(rate):'정가 '+fmt(price)+' 짬 · 초당 가치 +'+fmt(rate),owned?'판매 '+fmt(value):'구매 '+fmt(price),()=>{
  if(owned){earn(assetValue(tab,i,price));s[tab]=s[tab].filter(x=>x!==i);delete s.assetBoughtAt[tab][i];msg(name+' 판매 완료');save();render()}
  else actionBuy(price,()=>{s[tab].push(i);s.assetBoughtAt[tab][i]=Date.now()},name+' 구매');
- },!owned&&(!unlock||s.money<price));
+ },!owned&&s.money<price);
  });
  }else if(tab==='relics'){
  const p=document.createElement('p');p.className='note';p.textContent='유물 항아리 · 마나 '+fmt(s.mana)+'개. 터치 1,000회마다 마나 1개 획득. 유물 10종 중 세부 수치가 확인된 5종만 구현되어 있습니다. 마나 획득 규칙은 임시 설정입니다.';el.append(p);

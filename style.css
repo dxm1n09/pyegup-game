@@ -256,3 +256,12 @@ html body,html body button,html body input,html body select,html body textarea,h
 .story-controls{display:flex;gap:8px;margin-top:20px}
 .story-controls button{flex:1;min-height:42px;background:#527461;color:#fff;border:0!important;font:inherit;cursor:pointer}
 .story-controls button:disabled{opacity:.45}
+
+/* Compact, non-scrolling 2-row navigation and brush logo header. */
+html body .app .top .brand-title{display:flex;align-items:center;gap:11px;min-width:0}
+html body .app .top .brand-logo{width:54px;height:54px;object-fit:contain;flex-shrink:0;mix-blend-mode:multiply;image-rendering:auto}
+html body .app .top .brand-title>div{min-width:0}
+html body .app .top .brand-title h1{font-size:clamp(22px,5vw,29px);margin:0}
+html body .app .tabs{display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;gap:3px!important;overflow:visible!important;padding:4px!important;width:100%!important}
+html body .app .tabs button{width:100%!important;min-width:0!important;max-width:none!important;min-height:47px;display:flex;align-items:center;justify-content:center;white-space:normal!important;word-break:keep-all;overflow-wrap:anywhere;line-height:1.12!important;text-align:center;font-size:clamp(9px,2.1vw,12px)!important;padding:5px 2px!important;flex:auto!important}
+@media(max-width:400px){html body .app .tabs{gap:2px!important;padding:2px!important}html body .app .tabs button{font-size:9px!important;padding:4px 1px!important;min-height:48px}html body .app .top .brand-logo{width:45px;height:45px}}

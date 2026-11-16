@@ -140,3 +140,49 @@ dialog{background:#f0e3c3!important;color:#382e1f!important;border:3px solid #56
 .app button,.app input,.app select,.app dialog,.app .item,.app .card,.app .hud,.app .panel{box-shadow:none!important}
 /* Keep the HD friend portraits crisp and unfiltered. */
 .friendPortraitPng{filter:none!important;transform:none!important}
+
+/* v2 flat redesign: consistent warm palette, clear hierarchy, no decorative strokes or shadows. */
+:root{color-scheme:light;--bg:#f5f2e9;--card:#fffdf7;--line:transparent;--muted:#6e6b61;--accent:#846128;--blue:#596e65}
+html,body{background:#f5f2e9!important;color:#292b28!important}
+.app{background:#f5f2e9!important;border:0!important;padding:14px 14px 30px}
+.top{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:5px 2px 12px!important;margin-bottom:8px}
+.top h1,.top small{color:#282b29!important}.top em{color:#846128!important}
+.hud{gap:8px!important}.hud>div{background:#e9e9df!important;border:0!important;border-radius:12px!important;padding:12px!important;box-shadow:none!important}
+.hud span{color:#666c65!important}.hud strong{color:#4e5e50!important}
+.play{border:0!important;border-radius:16px!important;box-shadow:none!important;overflow:hidden}
+.playtop{background:#f7f5edee!important;color:#30352f!important;padding:10px!important}
+.playbottom{background:#f7f5edee!important;color:#30352f!important;padding:10px!important}
+.playbottom b{color:#6c5831!important}
+.pill{background:#e6e5d9!important;color:#3f493f!important;border:0!important;border-radius:8px!important;box-shadow:none!important}
+.play .playtop>.comboBox{background:#e7e9dd!important;color:#34443a!important;border:0!important;border-radius:10px!important;box-shadow:none!important;padding:9px 10px!important}
+.comboHeading,.comboMeta,.comboMeta span,.playtop #comboNext{color:#34443a!important}
+.play .playtop .comboTrack{background:#d1d8c8!important;border:0!important;border-radius:99px!important;box-shadow:none!important;height:14px!important;min-height:14px!important}
+.play #comboFill{background:#6c9679!important;border:0!important;border-radius:99px!important;box-shadow:none!important;min-height:14px!important}
+.tabs{background:#eaeae0!important;border:0!important;border-radius:12px!important;padding:6px!important;gap:5px!important}
+.tabs button{background:transparent!important;color:#5c6259!important;border:0!important;border-radius:8px!important;box-shadow:none!important;font-weight:650!important}
+.tabs button.active{background:#526e5e!important;color:#fff!important;border:0!important;box-shadow:none!important}
+.panel{background:#fffdf7!important;color:#292b28!important;border:0!important;border-radius:14px!important;box-shadow:none!important;padding:16px!important}
+.panel h2,.iteminfo strong{color:#2d332e!important}.panelhead p,.iteminfo p{color:#73776f!important}.panelhead>span{color:#59705e!important}
+.item{border:0!important;border-bottom:1px solid #efeee7!important;padding:13px 2px!important}
+.item:last-child{border-bottom:0!important}
+.item button,.bigbutton{background:#527461!important;color:#fff!important;border:0!important;border-radius:9px!important;box-shadow:none!important;padding:10px 12px!important}
+.item button:disabled,.bigbutton:disabled{background:#e5e5dd!important;color:#92968d!important;border:0!important;box-shadow:none!important}
+.item button:active,.bigbutton:active,.tabs button:active{transform:none!important;opacity:.8}
+.note{background:#f0f0e8!important;color:#5c6259!important;border:0!important;border-radius:9px!important}
+.iconbtn,footer button,.settingsBtns button,.fileLabel,.close{background:#e6e8de!important;color:#3f4b41!important;border:0!important;border-radius:9px!important;box-shadow:none!important}
+footer{color:#73786e!important}
+dialog{background:#fffdf7!important;color:#2c332d!important;border:0!important;border-radius:14px!important;box-shadow:none!important}
+dialog p{color:#6c7169!important}
+.tapHint{background:#f7f5edee!important;color:#38483d!important;border:0!important;border-radius:9px!important;box-shadow:none!important}
+.friend-photo{background-color:#f0f0e9!important;border:0!important;border-radius:9px!important;box-shadow:none!important}
+.friend-photo.friend-locked{background:#ecece5!important}
+.authGate{background:#292f2be8!important}
+.authCard{background:#fffdf7!important;color:#30372f!important;border:0!important;border-radius:15px!important;box-shadow:none!important;padding:22px!important}
+.authCard input{background:#f2f3ed!important;color:#2f352f!important;border:0!important;border-radius:8px!important}
+.authCard button{background:#527461!important;color:#fff!important;border:0!important;border-radius:9px!important;box-shadow:none!important}
+#importLocalBtn{background:#e7e9de!important;color:#3d4a3f!important}
+.authHelp{color:#6d756c!important}
+.app,.app *,.app *::before,.app *::after,.authGate,.authGate *{box-shadow:none!important;text-shadow:none!important;filter:none!important}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #527461!important;outline-offset:2px!important}
+.friendPortraitPng{filter:none!important;transform:none!important;image-rendering:auto!important}
+@media(max-width:520px){.app{padding:10px 10px 24px!important}.hud>div{padding:9px!important}.panel{padding:13px!important}}

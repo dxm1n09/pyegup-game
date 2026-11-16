@@ -34,5 +34,5 @@ if(!cfg?.url||!cfg?.anonKey||!cfg?.authDomain||!/^https:\/\//.test(cfg.url)||!/^
  const importOld=async()=>{if(!ready||!uid||!legacySave){alert('가져올 기존 저장 데이터가 없습니다.');return}
  if(!confirm('현재 계정의 클라우드 저장을 기존 기기 저장 데이터로 덮어쓸까요?'))return;
  window.pyegupAccount.loadCloud(legacySave);queueSave(window.pyegupAccount.snapshot());await flush();el('settings').close();message('기존 진행 상황 가져오기 완료')};
- importBtn.onclick=()=>void importOld();el('importLocalSettingsBtn').onclick=()=>void importOld();
+ importBtn.onclick=()=>void importOld();
 }

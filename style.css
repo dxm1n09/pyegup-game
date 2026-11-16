@@ -65,3 +65,8 @@ main{display:flex;flex-direction:column;gap:10px}
 
 /* 미해금 친구는 사진 대신 물음표로 표시 */
 .item .friend-photo.friend-locked{display:grid;place-items:center;background:none!important;border:0!important;color:#d90000;font-size:39px;font-weight:900;filter:none!important;text-shadow:0 1px 1px #fff}
+
+/* Portrait clarity: avoid heavy outlines and unnecessary interpolation effects. */
+.friend-photo:not(.friend-locked){image-rendering:auto;-webkit-backface-visibility:hidden;backface-visibility:hidden;filter:drop-shadow(0 1px 2px #0007)!important;background-color:transparent!important}
+.dormFriend{filter:drop-shadow(0 1px 2px #0009)!important}
+.dormFriendImage{image-rendering:auto;backface-visibility:hidden;transform:translateZ(0)}

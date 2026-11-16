@@ -119,7 +119,135 @@ const tapGain=()=>safe(Math.floor(baseTap()*friendTapBonus()*giftTapBonus()*bonu
 const friendIncome=()=>s.friends.reduce((m,l,i)=>m+(l?friendPrices[i]/100*Math.pow(1.12,l-1)*l:0),0);
 const autoGain=()=>safe(Math.floor(friendIncome()*bonusRelic('auto')*permanent()));
 const ASSET_RATE_PER_SECOND=.0000005; // 0.00005 percent of purchase price / second
-const assetValue=(category,i,price)=>safe(price+price*ASSET_RATE_PER_SECOND*Math.max(0,(Date.now()-(s.assetBoughtAt?.[category]?.[i]||Date.now()))/1000));
+const assetValue=(category,i,price,time=Date.now())=>safe(price+price*ASSET_RATE_PER_SECOND*Math.max(0,(time-(s.assetBoughtAt?.[category]?.[i]||time))/1000));
+
+const catalogGroups=[
+ ['friends','친구',friendNames],['zones','학교 구역',zoneNames],['collect','수집품',collectibleNames],
+ ['gifts','친구들의 선물',giftNames],['clubs','동아리 지배',clubNames],['places','주변 시설',placeNames],
+ ['power','학교 권력',powerNames],['relics','유물',relics.map(x=>x.name)]
+];
+function updateRecords(){
+ const current={friends:s.friends.map((n,i)=>n>0?i:-1).filter(i=>i>=0),zones:Object.keys(s.zones).map(Number),
+ collect:Object.keys(s.collect).map(Number),gifts:s.gifts,clubs:s.clubs,places:s.places,power:s.power,relics:s.relics};
+ for(const [k] of catalogGroups)s.history[k]=[...new Set([...(s.history[k]||[]),...current[k]])].sort((a,b)=>a-b);
+ s.stats.peakLevel=Math.max(s.stats.peakLevel||1,level());
+ s.stats.lifetimeTaps=Math.max(s.stats.lifetimeTaps||0,s.taps);
+ for(const [key,, ,condition] of achievementDefs)if(!s.achievements.includes(key)&&condition())s.achievements.push(key);
+}
+const achievementDefs=[
+ ['first-tap','첫 짬','누적 터치 1회',()=>s.stats.lifetimeTaps>=1],
+ ['tap-100','손가락 훈련','누적 터치 100회',()=>s.stats.lifetimeTaps>=100],
+ ['tap-1000','터치 장인','누적 터치 1,000회',()=>s.stats.lifetimeTaps>=1000],
+ ['tap-10000','터치의 전설','누적 터치 10,000회',()=>s.stats.lifetimeTaps>=10000],
+ ['combo-80','콤보 입문','최대 콤보 80 달성',()=>s.stats.peakCombo>=80],
+ ['combo-820','콤보 정점','최대 콤보 820 달성',()=>s.stats.peakCombo>=820],
+ ['friend-1','첫 친구','친구 1명 영입',()=>s.history.friends.length>=1],
+ ['friend-all','친구 수집 완료','친구 17명 영입',()=>s.history.friends.length===17],
+ ['zone-all','학교 정복','학교 구역 7곳 구매',()=>s.history.zones.length===7],
+ ['collect-all','수집왕','수집품 7종 구매',()=>s.history.collect.length===7],
+ ['club-1','동아리 인수','동아리 1개 구매',()=>s.history.clubs.length>=1],
+ ['club-all','동아리 지배자','동아리 15개 구매',()=>s.history.clubs.length===15],
+ ['places-all','시설 수집 완료','주변 시설 10곳 구매',()=>s.history.places.length===10],
+ ['power-all','권력의 정점','학교 권력 7종 구매',()=>s.history.power.length===7],
+ ['gift-all','선물 수집 완료','친구 선물 17종 구매',()=>s.history.gifts.length===17],
+ ['relic-1','유물 발견','유물 1종 획득',()=>s.history.relics.length>=1],
+ ['relic-all','유물 도감 완성','유물 5종 획득',()=>s.history.relics.length===5],
+ ['sale-1','첫 매각','자산 1회 판매',()=>s.stats.sales>=1],
+ ['prestige-1','다시 시작','재입학 1회',()=>s.prestiges>=1],
+ ['story-2','학부모와의 전쟁','2화 이야기 완독',()=>s.storyRead.includes(1)],
+ ['story-8','전설의 유급생','8화 엔딩 완독',()=>s.storyRead.includes(7)],
+ ['level-150','Lv.150 달성','최고 150레벨',()=>s.stats.peakLevel>=150],
+ ['level-350','Lv.350 달성','최고 350레벨',()=>s.stats.peakLevel>=350],
+ ['level-750','Lv.750 달성','최고 750레벨',()=>s.stats.peakLevel>=750],
+ ['level-875','Lv.875 달성','최고 875레벨',()=>s.stats.peakLevel>=875]
+];
+function worthAt(time=Date.now()){
+ const ownedValue=(group,prices)=>s[group].reduce((total,i)=>total+assetValue(group,i,prices[i],time),0);
+ const zones=Object.entries(s.zones).reduce((a,[i,t])=>a+zonePrices[i]*(1+ASSET_RATE_PER_SECOND*Math.max(0,(time-t)/1000)),0);
+ const collect=Object.entries(s.collect).reduce((a,[i,t])=>a+collectiblePrices[i]*(1+ASSET_RATE_PER_SECOND*Math.max(0,(time-t)/1000)),0);
+ const gifts=s.gifts.reduce((a,i)=>a+giftPrices[i],0);
+ return safe(s.money+zones+collect+gifts+ownedValue('clubs',clubPrices)+ownedValue('places',placePrices)+ownedValue('power',powerPrices));
+}
+function leaderboardSnapshot(){
+ const now=Date.now();
+ let rate=0;
+ for(const [group,prices] of [['zones',zonePrices],['collect',collectiblePrices]]){
+   for(const i of Object.keys(s[group]))rate+=prices[+i]*ASSET_RATE_PER_SECOND;
+ }
+ for(const [group,prices] of [['clubs',clubPrices],['places',placePrices],['power',powerPrices]]){
+   for(const i of s[group])rate+=prices[i]*ASSET_RATE_PER_SECOND;
+ }
+ return {net_worth:worthAt(now),growth_per_second:rate};
+}
+function displayRow(container,name,detail,locked=false){
+ const row=document.createElement('div');row.className='archive-row'+(locked?' archive-locked':'');
+ const label=document.createElement('strong');label.textContent=name;const p=document.createElement('p');p.textContent=detail;
+ row.append(label,p);container.append(row);return row;
+}
+function displayStory(container){
+ storyChapters.forEach((chapter,i)=>{
+  const available=s.stats.peakLevel>=chapter.level;
+  const row=document.createElement('div');row.className='archive-row';
+  const title=document.createElement('strong');title.textContent=available?chapter.title:'잠김 · Lv.'+chapter.level;
+  const desc=document.createElement('p');desc.textContent=available?'Lv.'+chapter.level+' · 5장면 · '+(s.storyRead.includes(i)?'완독':'열람 가능'):'Lv.'+chapter.level+' 달성 시 공개';
+  const b=document.createElement('button');b.className='archive-button';b.textContent=available?'읽기':'잠김';b.disabled=!available;
+  b.onclick=()=>{storyPage={chapter:i,scene:0};renderStoryViewer()};
+  row.append(title,desc,b);container.append(row);
+ });
+}
+function renderStoryViewer(){
+ const viewer=$('storyViewer');if(!viewer)return;
+ if(!storyPage){viewer.hidden=true;return}
+ const c=storyChapters[storyPage.chapter],sc=c.scenes[storyPage.scene];
+ viewer.hidden=false;$('storyHeading').textContent=c.title;$('storyProgress').textContent=(storyPage.scene+1)+' / '+c.scenes.length+' · '+sc[0];
+ $('storyText').textContent=sc[1];$('storyPrev').disabled=storyPage.scene===0;
+ $('storyNext').textContent=storyPage.scene===c.scenes.length-1?'완독':'다음';
+}
+function displayCatalog(container){
+ const selectors=document.createElement('div');selectors.className='archive-categories';
+ for(const [key,label] of catalogGroups){
+  const b=document.createElement('button');b.className='archive-button'+(collectionCategory===key?' selected':'');
+  b.textContent=label;b.onclick=()=>{collectionCategory=key;render()};selectors.append(b);
+ }
+ container.append(selectors);
+ const [key,,names]=catalogGroups.find(([k])=>k===collectionCategory)||catalogGroups[0];
+ const seen=new Set(s.history[key]);
+ const heading=document.createElement('p');heading.className='archive-count';
+ heading.textContent='발견 '+seen.size+' / '+names.length+' · 판매하거나 재입학해도 기록 유지';container.append(heading);
+ names.forEach((name,i)=>{
+  const unlocked=seen.has(i);const row=displayRow(container,unlocked?name:'???',unlocked?'발견 완료':'미발견',!unlocked);
+  if(key==='friends'&&unlocked){
+   const pic=document.createElement('span');pic.className='friend-photo';pic.setAttribute('role','img');pic.setAttribute('aria-label',name+' 사진');
+   loadFriendPortrait(i,pic);row.prepend(pic);
+  }
+ });
+}
+function displayAchievements(container){
+ const count=s.achievements.length;
+ const summary=document.createElement('p');summary.className='archive-count';summary.textContent='달성 '+count+' / '+achievementDefs.length;container.append(summary);
+ for(const [id,title,desc] of achievementDefs){
+  const done=s.achievements.includes(id);
+  displayRow(container,(done?'달성 · ':'미달성 · ')+title,desc,!done);
+ }
+}
+let leaderboardRows=[],leaderboardError='',leaderboardRequested=false;
+function showLeaderboard(container){
+ const note=document.createElement('p');note.className='archive-count';
+ note.textContent='총자산 = 보유 짬 + 학교 구역·수집품·선물·동아리·주변 시설·학교 권력 시세 (현재 시간 기준)';
+ container.append(note);
+ const button=document.createElement('button');button.className='archive-button';button.textContent='순위 새로고침';
+ button.onclick=()=>{leaderboardRequested=true;window.pyegupCloud?.refreshLeaderboard?.()};container.append(button);
+ if(leaderboardError)displayRow(container,'순위표 연결 오류',leaderboardError);
+ if(!leaderboardRows.length){displayRow(container,'순위 데이터 없음','계정별 클라우드 동기화 후 표시됩니다.');return}
+ const now=Date.now(),rows=leaderboardRows.map(row=>({...row,calculated:row.net_worth+Math.max(0,(now-new Date(row.updated_at).getTime())/1000)*row.growth_per_second})).sort((a,b)=>b.calculated-a.calculated);
+ rows.slice(0,100).forEach((row,i)=>displayRow(container,(i+1)+'위 · '+row.username,fmt(row.calculated)+' 짬'));
+}
+window.pyegupLeaderboard={
+ snapshot:leaderboardSnapshot,
+ setRows(rows){leaderboardRows=Array.isArray(rows)?rows:[];leaderboardError='';if(tab==='ranking')render()},
+ setError(text){leaderboardError=String(text);if(tab==='ranking')render()}
+};
+
 const COMBO_LIMITS=[0,80,280,550,820];
 const combo=()=>streak>=820?1.5:streak>=550?1.4:streak>=280?1.3:streak>=80?1.2:1;
 function updateComboUI(){const tier=streak>=820?4:streak>=550?3:streak>=280?2:streak>=80?1:0;const low=COMBO_LIMITS[tier],high=COMBO_LIMITS[Math.min(4,tier+1)];const progress=tier===4?100:Math.max(0,Math.min(100,(streak-low)/(high-low)*100));$('comboTag').textContent='콤보 ×'+combo().toFixed(1);$('comboFill').style.width=progress+'%';$('comboNext').textContent=tier===4?'최대 콤보':'다음 ×'+(1.2+tier*.1).toFixed(1);}

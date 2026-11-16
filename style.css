@@ -89,3 +89,37 @@ main{display:flex;flex-direction:column;gap:10px}
 /* Prevent double-tap zoom while rapidly buying upgrades on mobile Safari. */
 html,body,.app,.tabs,.panel,.item,.item button,.bigbutton,.play,.character,.iconbtn,button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 button{user-select:none;-webkit-user-select:none}
+
+/* Vintage square-edged idle-game visual redesign */
+:root{color-scheme:light;--bg:#e4d8b6;--card:#f2e8cd;--line:#534a38;--muted:#655d4c;--accent:#a66b23;--blue:#7b8a69}
+html,body{background:#d6c7a5!important;color:#332b20!important}
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif!important}
+.app{background:#e4d8b6!important;border-left:3px solid #554b37;border-right:3px solid #554b37;min-height:100vh}
+.top{background:#c7b488;border:3px solid #51442f;padding:10px;margin-bottom:10px;box-shadow:3px 3px 0 #8d7c59}
+.top h1,.top small{color:#332b20!important}.top em{color:#704b24!important}
+.hud>div{background:#f3e8c9!important;border:3px solid #574a32!important;border-radius:2px!important;box-shadow:3px 3px 0 #a99b79!important}
+.hud span{color:#65553c!important}.hud strong{color:#674720!important}
+.play{border:4px solid #55442c!important;border-radius:2px!important;box-shadow:4px 4px 0 #9b8a65!important}
+.playtop,.playbottom{background:#e9dcbbeb!important;color:#342b1d!important;border-color:#574b36!important}
+.playbottom b{color:#754d20!important}
+.pill{border:2px solid #5a4b33!important;border-radius:2px!important;background:#d7c49a!important;color:#352c1d!important;box-shadow:2px 2px 0 #97845e!important}
+.comboBox{background:#eee0baed!important;border:2px solid #5d4d34!important;border-radius:2px!important;color:#302719!important;box-shadow:2px 2px 0 #9c8962!important}
+.comboHeading,.comboMeta,.comboMeta span{color:#302719!important}
+.play .playtop .comboTrack{background:#b5a37f!important;border:2px solid #57492f!important;border-radius:1px!important;box-shadow:inset 2px 2px 0 #8b7957!important}
+#comboFill{background:#9b7837!important;border-radius:0!important}
+.tabs{background:#c6b38b!important;border:3px solid #594b34!important;border-radius:2px!important;padding:7px!important;gap:5px!important}
+.tabs button{background:#e8d8b4!important;color:#4b3c26!important;border:2px solid #6a593e!important;border-radius:1px!important;box-shadow:2px 2px 0 #a48f65!important;font-weight:700!important}
+.tabs button.active{background:#9b7a3e!important;color:#fff5d9!important;border-color:#4f3c21!important;box-shadow:inset 2px 2px 0 #61491f!important}
+.panel{background:#f1e5c7!important;color:#352d21!important;border:3px solid #584a33!important;border-radius:2px!important;box-shadow:4px 4px 0 #b3a17d!important}
+.panel h2,.iteminfo strong{color:#382d1e!important}.panelhead p,.iteminfo p{color:#6b5b42!important}.panelhead>span{color:#805624!important}
+.item{border-bottom:2px dashed #b6a27d!important;padding:12px 3px!important}
+.item button,.bigbutton{background:#b9934c!important;color:#2d2416!important;border:2px solid #5a4525!important;border-radius:1px!important;box-shadow:3px 3px 0 #a28b5f!important}
+.item button:active,.bigbutton:active,.tabs button:active{transform:translate(2px,2px);box-shadow:none!important}
+.item button:disabled,.bigbutton:disabled{background:#c6baa1!important;color:#756c5a!important;border-color:#92856e!important;box-shadow:none!important}
+.note{background:#e1d2ac!important;color:#584a33!important;border:2px solid #b3a07a!important;border-radius:1px!important}
+.iconbtn,footer button,.settingsBtns button,.fileLabel,.close{background:#e2cfaa!important;color:#392d1c!important;border:2px solid #59482f!important;border-radius:1px!important;box-shadow:2px 2px 0 #a18b62!important}
+footer{color:#675940!important}
+dialog{background:#f0e3c3!important;color:#382e1f!important;border:3px solid #56472f!important;border-radius:2px!important}dialog p{color:#6a5b43!important}
+.friend-photo{border-radius:1px!important;border-color:#6c5738!important;background-color:#e9dfc8!important}
+.tapHint{border-radius:1px!important;background:#e8d8b8ed!important;color:#3d3020!important;border:2px solid #5b492e!important}
+@media(max-width:520px){.app{border-left:0;border-right:0}.top{padding:8px}.hud>div{padding:7px!important}}

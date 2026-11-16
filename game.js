@@ -125,6 +125,12 @@ const friendTapBonus=()=>s.friends.reduce((m,l,i)=>m+(l>=20?friendBonuses[i]/100
 const giftTapBonus=()=>s.gifts.reduce((m,i)=>m+giftBonuses[i]/100,1);
 const permanent=()=>1+s.prestiges*.1;
 const tapGain=()=>safe(Math.floor(baseTap()*friendTapBonus()*giftTapBonus()*bonusRelic('tap')*permanent()));
+const BONUS_CYCLE=180000,BONUS_DURATION=10000;
+let bonusStart=Date.now();
+const bonusActive=()=>Date.now()-bonusStart<BONUS_DURATION;
+const bonusTapGain=()=>Math.floor(tapGain()*combo()*(bonusActive()?1.5:1));
+function updateBonusUI(){const elapsed=Math.max(0,Date.now()-bonusStart),active=elapsed<BONUS_DURATION;const remain=active?Math.ceil((BONUS_DURATION-elapsed)/1000):Math.ceil(Math.max(0,BONUS_CYCLE-elapsed)/1000);const badge=$('bonusStatus');if(badge){badge.textContent=active?'보너스 타임! 터치 ×1.5 · '+remain+'초':'다음 보너스 '+Math.floor(remain/60)+':'+String(remain%60).padStart(2,'0');badge.classList.toggle('active',active)}const portrait=$('bonusPortrait');if(portrait)portrait.hidden=!active;}
+
 const friendIncome=()=>s.friends.reduce((m,l,i)=>m+(l?friendPrices[i]/100*Math.pow(1.12,l-1)*l:0),0);
 const autoGain=()=>safe(Math.floor(friendIncome()*bonusRelic('auto')*permanent()));
 const ASSET_RATE_PER_SECOND=.0000005; // 0.00005 percent of purchase price / second
@@ -314,8 +320,8 @@ function drawItems(){const el=$('items');el.replaceChildren();updateRecords();$(
  }
 }
 function drawRelic(cost,n){if(s.mana<cost)return;s.mana-=cost;const got=[];for(let j=0;j<n;j++){const i=Math.floor(Math.random()*relics.length);if(!s.relics.includes(i)){s.relics.push(i);got.push(relics[i].name)}}msg(got.length?'유물 획득: '+got.join(', '):'이미 보유한 유물만 나왔습니다');save();render()}
-function render(){updateRecords();renderDormFriends();const now=Date.now();$('money').textContent=fmt(s.money);$('income').textContent=fmt(autoGain());$('level').textContent=fmt(level());$('tapIncome').textContent=fmt(tapGain()*combo());$('prestigeTag').textContent='재입학 '+s.prestiges+'회';updateComboUI();drawItems();renderAt=now}
-function tap(ev){const now=Date.now();streak=Math.min(820,streak+1);lastTap=now;s.taps++;s.stats.lifetimeTaps++;s.stats.peakCombo=Math.max(s.stats.peakCombo,streak);if(s.taps%5000===0){s.mana++;msg('터치 5,000회 달성! 마나 1개 획득!')}if(s.stats.lifetimeTaps%3000===0){const available=relics.map((_,i)=>i).filter(i=>!s.relics.includes(i));if(available.length){const i=available[Math.floor(Math.random()*available.length)];s.relics.push(i);msg('터치 3,000회 보상! 유물 획득: '+relics[i].name)}else{msg('터치 3,000회 달성! 모든 유물을 이미 보유하고 있습니다')}save()}const value=Math.floor(tapGain()*combo());earn(value);$('money').textContent=fmt(s.money);$('level').textContent=fmt(level());$('tapIncome').textContent=fmt(tapGain()*combo());updateComboUI();const f=document.createElement('span');f.className='float';const label=document.createElement('span');label.className='floatJam';label.textContent='짬';const amount=document.createElement('span');amount.className='floatAmount';amount.textContent='+'+fmt(value);f.append(label,amount);const scene=$('play').getBoundingClientRect();const px=ev&&Number.isFinite(ev.clientX)?ev.clientX-scene.left:scene.width/2;const py=ev&&Number.isFinite(ev.clientY)?ev.clientY-scene.top:scene.height*.4;f.style.left=Math.max(18,Math.min(scene.width-18,px))+'px';f.style.top=Math.max(20,Math.min(scene.height-20,py))+'px';f.style.setProperty('--dx',(Math.random()*38-19)+'px');$('play').append(f);setTimeout(()=>f.remove(),850);if(now-renderAt>600)render()}
+function render(){updateBonusUI();updateRecords();renderDormFriends();const now=Date.now();$('money').textContent=fmt(s.money);$('income').textContent=fmt(autoGain());$('level').textContent=fmt(level());$('tapIncome').textContent=fmt(bonusTapGain());$('prestigeTag').textContent='재입학 '+s.prestiges+'회';updateComboUI();drawItems();renderAt=now}
+function tap(ev){const now=Date.now();streak=Math.min(820,streak+1);lastTap=now;s.taps++;s.stats.lifetimeTaps++;s.stats.peakCombo=Math.max(s.stats.peakCombo,streak);if(s.taps%5000===0){s.mana++;msg('터치 5,000회 달성! 마나 1개 획득!')}if(s.stats.lifetimeTaps%3000===0){const available=relics.map((_,i)=>i).filter(i=>!s.relics.includes(i));if(available.length){const i=available[Math.floor(Math.random()*available.length)];s.relics.push(i);msg('터치 3,000회 보상! 유물 획득: '+relics[i].name)}else{msg('터치 3,000회 달성! 모든 유물을 이미 보유하고 있습니다')}save()}const value=bonusTapGain();earn(value);$('money').textContent=fmt(s.money);$('level').textContent=fmt(level());$('tapIncome').textContent=fmt(bonusTapGain());updateComboUI();const f=document.createElement('span');f.className='float';const label=document.createElement('span');label.className='floatJam';label.textContent='짬';const amount=document.createElement('span');amount.className='floatAmount';amount.textContent='+'+fmt(value);f.append(label,amount);const scene=$('play').getBoundingClientRect();const px=ev&&Number.isFinite(ev.clientX)?ev.clientX-scene.left:scene.width/2;const py=ev&&Number.isFinite(ev.clientY)?ev.clientY-scene.top:scene.height*.4;f.style.left=Math.max(18,Math.min(scene.width-18,px))+'px';f.style.top=Math.max(20,Math.min(scene.height-20,py))+'px';f.style.setProperty('--dx',(Math.random()*38-19)+'px');$('play').append(f);setTimeout(()=>f.remove(),850);if(now-renderAt>600)render()}
 // Prevent mobile browsers (including Safari) from zooming on repeated game taps.
 // The game already handles taps on pointerdown, so cancelling a rapid touchend
 // only suppresses the browser's double-tap gesture, not game scoring.
@@ -365,14 +371,14 @@ function collectOfflineReward(seconds){
  return gained;
 }
 let hiddenSince=document.hidden?Date.now():null;
-lastFrame=Date.now();setInterval(()=>{const now=Date.now(),dt=Math.min(5,(now-lastFrame)/1000);lastFrame=now;if(document.hidden)return;if(lastTap&&now-lastTap>650&&streak>0){streak=Math.max(0,streak-24*dt);updateComboUI();$('tapIncome').textContent=fmt(tapGain()*combo())}earn(autoGain()*dt);if(now-renderAt>950){render();maybeOpenStory()}},200);
-setInterval(()=>{if(!document.hidden)save()},15000);document.addEventListener('visibilitychange',()=>{if(document.hidden){save();hiddenSince=Date.now()}else{const now=Date.now(),away=Math.max(0,(now-(hiddenSince??s.last))/1000);if(away>5)collectOfflineReward(away);hiddenSince=null;lastFrame=now;render();save()}});window.addEventListener('pagehide',save);render();markPreviouslyUnlockedStories();save();
+lastFrame=Date.now();setInterval(()=>{const now=Date.now(),dt=Math.min(5,(now-lastFrame)/1000);lastFrame=now;if(document.hidden)return;if(now-bonusStart>=BONUS_CYCLE){bonusStart=now;msg('보너스 타임! 10초간 터치 수익 1.5배!')}updateBonusUI();if(lastTap&&now-lastTap>650&&streak>0){streak=Math.max(0,streak-24*dt);updateComboUI();$('tapIncome').textContent=fmt(bonusTapGain())}earn(autoGain()*dt);if(now-renderAt>950){render();maybeOpenStory()}},200);
+setInterval(()=>{if(!document.hidden)save()},15000);document.addEventListener('visibilitychange',()=>{if(document.hidden){save();hiddenSince=Date.now()}else{const now=Date.now(),away=Math.max(0,(now-(hiddenSince??s.last))/1000);if(away>5)collectOfflineReward(away);hiddenSince=null;lastFrame=now;render();save()}});window.addEventListener('pagehide',save);bonusStart=Date.now()-BONUS_DURATION;render();markPreviouslyUnlockedStories();save();
 
 /* Account bridge: Firebase authentication and cloud sync are initialized separately. */
 window.pyegupAccount={
  getLocal:()=>{try{return JSON.parse(localStorage.getItem(KEY))}catch{return null}},
- loadCloud:data=>{if(!data||typeof data!=='object')return;localStorage.setItem(KEY,JSON.stringify(data));s=load();const away=Math.max(0,Math.min(MAX_AWAY,(Date.now()-s.last)/1000));collectOfflineReward(away);s.last=Date.now();streak=0;lastFrame=Date.now();render();markPreviouslyUnlockedStories();window.pyegupCloud?.queueSave?.(structuredClone(s))},
- resetForAccount:()=>{$('offlineReward').hidden=true;s=initial();markPreviouslyUnlockedStories();streak=0;lastFrame=Date.now();render()},
+ loadCloud:data=>{if(!data||typeof data!=='object')return;localStorage.setItem(KEY,JSON.stringify(data));s=load();const away=Math.max(0,Math.min(MAX_AWAY,(Date.now()-s.last)/1000));collectOfflineReward(away);s.last=Date.now();streak=0;lastFrame=Date.now();bonusStart=Date.now();render();markPreviouslyUnlockedStories();window.pyegupCloud?.queueSave?.(structuredClone(s))},
+ resetForAccount:()=>{$('offlineReward').hidden=true;bonusStart=Date.now();s=initial();markPreviouslyUnlockedStories();streak=0;lastFrame=Date.now();render()},
  snapshot:()=>structuredClone(s),
  saveNow:()=>save()
 };

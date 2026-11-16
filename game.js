@@ -109,11 +109,18 @@ let s=load(),tab='growth',storyPage=null,collectionCategory='friends',lastFrame=
 const fmt=n=>{
  if(!Number.isFinite(n))return '매우 큰 수';
  const amount=Math.max(0,Math.floor(n));
- if(amount<1000)return amount.toLocaleString('ko-KR');
- const units=[[1e20,'해'],[1e16,'경'],[1e12,'조'],[1e8,'억'],[1e4,'만'],[1e3,'천'],[1e2,'백'],[10,'십'],[1,'']];
- let rest=amount;const parts=[];
- for(const [value,label] of units){const q=Math.floor(rest/value);if(q>0){parts.push(q.toLocaleString('ko-KR')+label);rest-=q*value}if(parts.length===2)break}
- return parts.join(' ');
+ if(amount<10000)return String(amount);
+ // Four-digit Korean units. Show the two highest nonzero groups in full.
+ const units=['','만','억','조','경','해','자','양','구','간'];
+ let rest=BigInt(amount),group=0;
+ const parts=[];
+ while(rest>0n&&group<units.length){
+  const chunk=Number(rest%10000n);
+  if(chunk)parts.push({value:chunk,unit:units[group],index:group});
+  rest/=10000n;group++;
+ }
+ const top=parts.reverse().slice(0,2);
+ return top.map((p,i)=>(i>0&&p.index===0?' ':'')+p.value+p.unit).join('');
 };
 const safe=n=>Number.isFinite(n)?Math.max(0,n):Number.MAX_VALUE;
 const level=()=>s.tapLevel+1;

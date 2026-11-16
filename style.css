@@ -22,3 +22,7 @@ main{display:flex;flex-direction:column;gap:10px}
 /* 친구 사진 목록: assets/friends/friend01.png ~ friend17.png */
 .friend-photo{width:64px;height:72px;object-fit:contain;flex:0 0 64px;filter:drop-shadow(0 0 1.5px #070b12) drop-shadow(0 2px 4px #0008)}
 @media(max-width:390px){.friend-photo{width:48px;height:58px;flex-basis:48px}}
+
+/* 친구 1~10: 업로드한 사진을 순서대로 담은 경량 이미지 스프라이트 */
+.friend-photo{display:block;width:64px;height:76px;flex:0 0 64px;object-fit:unset;background-image:url('assets/characters/friends-sprite.jpg');background-repeat:no-repeat;background-size:500% 200%;background-color:#233044;border:2px solid #6e84a7;border-radius:10px;filter:drop-shadow(0 2px 4px #0008)}
+@media(max-width:390px){.friend-photo{width:48px;height:57px;flex-basis:48px}}

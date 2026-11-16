@@ -30,3 +30,10 @@ main{display:flex;flex-direction:column;gap:10px}
 /* v1.5: 모든 친구 사진 스프라이트(4열×5행), 13번 차지훈 제외 */
 .friend-photo{width:64px;height:66px;flex:0 0 64px;background-image:url('assets/characters/friends-sprite.jpg?v=17');background-size:400% 500%;background-color:#e5e8ee;border-color:#e4bc6d;border-radius:12px}
 @media(max-width:390px){.friend-photo{width:49px;height:51px;flex-basis:49px}}
+
+/* v1.6: 터치 위치에 붓글씨 '짬'과 획득량 표시 후 위로 상승 */
+.play>.float{position:absolute;z-index:40;left:50%;top:35%;display:flex;flex-direction:column;align-items:center;gap:0;min-width:65px;width:max-content;max-width:190px;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap;animation:jamFloat .85s cubic-bezier(.16,.7,.2,1) forwards;filter:drop-shadow(0 2px 2px #0008)}
+.play>.float .floatJam{display:block;padding:1px 5px;background:#fffdf0e8;border:1px solid #151515;border-radius:2px;color:#101010;font-family:'Nanum Brush Script','Nanum Myeongjo','AppleMyungjo',serif;font-size:33px;font-weight:900;line-height:1.1;letter-spacing:-4px;text-shadow:0.7px 0 #111,-.7px 0 #111}
+.play>.float .floatAmount{display:block;color:#fff0a0;font-size:17px;font-weight:900;line-height:1.15;text-shadow:-1px -1px #16110b,1px 1px #16110b,0 2px 4px #000}
+@keyframes jamFloat{0%{opacity:0;transform:translate(-50%,-42%) scale(.72)}15%{opacity:1;transform:translate(-50%,-55%) scale(1.13)}45%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),-130px) scale(.98)}}
+@media(prefers-reduced-motion:reduce){.play>.float{animation:jamFloat .85s ease-out forwards!important;display:flex!important}}

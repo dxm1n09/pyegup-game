@@ -121,10 +121,10 @@ function reactToCharacterTouch(target){
   // Restart each press immediately, even during very fast combo tapping.
   figure.getAnimations().forEach(animation=>{if(animation.id==='character-tap-reaction')animation.cancel()});
   const animation=figure.animate([
-    {transform:'translateY(0) scale(1) rotate(0deg)'},
-    {transform:'translateY(-9px) scale(1.13) rotate(-5deg)',offset:.35},
-    {transform:'translateY(2px) scale(.96) rotate(3deg)',offset:.7},
-    {transform:'translateY(0) scale(1) rotate(0deg)'}
+    {translate:'0 0',scale:1,rotate:'0deg'},
+    {translate:'0 -9px',scale:1.13,rotate:'-5deg',offset:.35},
+    {translate:'0 2px',scale:.96,rotate:'3deg',offset:.7},
+    {translate:'0 0',scale:1,rotate:'0deg'}
   ],{duration:280,easing:'ease-out'});
   animation.id='character-tap-reaction';
 }

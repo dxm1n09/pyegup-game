@@ -222,6 +222,12 @@ function renderStoryViewer(){
  $('storyNext').textContent=storyPage.scene===c.scenes.length-1?'완독':'다음';
 }
 function displayCatalog(container){
+ const storyArchive=document.createElement('section');
+ storyArchive.className='story-archive';
+ const storyTitle=document.createElement('h3');storyTitle.textContent='스토리 기록';
+ storyArchive.append(storyTitle);
+ displayStory(storyArchive);
+ container.append(storyArchive);
  const selectors=document.createElement('div');selectors.className='archive-categories';
  for(const [key,label] of catalogGroups){
   const b=document.createElement('button');b.className='archive-button'+(collectionCategory===key?' selected':'');
@@ -336,6 +342,7 @@ $('play').addEventListener('pointerdown',e=>{if(e.target.closest('a, input, sele
 $('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(!b)return;tab=b.dataset.tab;if(tab==='ranking')window.pyegupCloud?.refreshLeaderboard?.();document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));render()});
 $('settingsBtn').onclick=()=>$('settings').showModal();
 $('storyClose').onclick=()=>{storyPage=null;renderStoryViewer()};
+$('storySkip').onclick=()=>{storyPage=null;save();renderStoryViewer()};
 $('storyPrev').onclick=()=>{if(storyPage&&storyPage.scene>0){storyPage.scene--;renderStoryViewer()}};
 $('storyNext').onclick=()=>{if(!storyPage)return;const idx=storyPage.chapter;if(storyPage.scene<storyChapters[idx].scenes.length-1){storyPage.scene++;renderStoryViewer()}else{if(!s.storyRead.includes(idx))s.storyRead.push(idx);storyPage=null;save();render();renderStoryViewer()}};
 $('resetBtn').onclick=()=>{if(!confirm('모든 게임 진행 상황을 초기화할까요?'))return;localStorage.removeItem(KEY);localStorage.removeItem(OLD);s=initial();$('settings').close();render();msg('게임을 초기화했습니다')};

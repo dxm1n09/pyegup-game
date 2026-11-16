@@ -413,3 +413,8 @@ html body .offline-card p{font-size:16px!important;margin:0 0 20px!important}
 html body .offline-card strong{display:block!important;font-size:32px!important;color:#222!important;margin-bottom:12px!important}
 html body .offline-card small{display:block!important;margin-bottom:22px!important}
 html body .offline-card button{display:block!important;width:100%!important;padding:13px!important;font-size:17px!important;background:#ffeb00!important;color:#111!important;border:2px solid #111!important;border-radius:0!important}
+
+html body .app .bonus-status{position:absolute!important;z-index:22!important;left:50%!important;top:10px!important;transform:translateX(-50%)!important;background:#f5e1ba!important;border:2px solid #222!important;color:#111!important;padding:5px 10px!important;white-space:nowrap!important;font-weight:800!important;font-size:13px!important}
+html body .app .bonus-status.active{background:#ffeb00!important;color:#111!important}
+html body .app .bonus-portrait[hidden]{display:none!important}
+html body .app .bonus-portrait{position:absolute!important;z-index:21!important;left:50%!important;bottom:7%!important;transform:translateX(-50%)!important;width:48%!important;height:75%!important;object-fit:contain!important;object-position:center bottom!important;pointer-events:none!important}

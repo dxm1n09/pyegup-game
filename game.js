@@ -129,7 +129,7 @@ const BONUS_CYCLE=180000,BONUS_DURATION=10000;
 let bonusStart=Date.now();
 const bonusActive=()=>Date.now()-bonusStart<BONUS_DURATION;
 const bonusTapGain=()=>Math.floor(tapGain()*combo()*(bonusActive()?1.5:1));
-function updateBonusUI(){const elapsed=Math.max(0,Date.now()-bonusStart),active=elapsed<BONUS_DURATION;const remain=active?Math.ceil((BONUS_DURATION-elapsed)/1000):Math.ceil(Math.max(0,BONUS_CYCLE-elapsed)/1000);const badge=$('bonusStatus');if(badge){badge.textContent=active?'보너스 타임! 터치 ×1.5 · '+remain+'초':'다음 보너스 '+Math.floor(remain/60)+':'+String(remain%60).padStart(2,'0');badge.classList.toggle('active',active)}const portrait=$('bonusPortrait');if(portrait)portrait.hidden=!active;}
+function updateBonusUI(){const active=bonusActive();const badge=$('bonusStatus');if(badge){badge.textContent='보너스 타임! 터치 ×1.5';badge.hidden=!active;badge.classList.toggle('active',active)}const portrait=$('bonusPortrait');if(portrait)portrait.hidden=!active;const play=$('play');if(play)play.classList.toggle('bonus-active',active);}
 
 const friendIncome=()=>s.friends.reduce((m,l,i)=>m+(l?friendPrices[i]/100*Math.pow(1.12,l-1)*l:0),0);
 const autoGain=()=>safe(Math.floor(friendIncome()*bonusRelic('auto')*permanent()));

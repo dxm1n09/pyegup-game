@@ -48,3 +48,9 @@ main{display:flex;flex-direction:column;gap:10px}
 .dormFriendImage{display:block;width:100%;height:100%;background-image:url('assets/characters/friends-sprite.jpg?v=17');background-size:400% 500%;background-repeat:no-repeat}
 @keyframes dormIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @media(max-width:520px){.play .characterzone{min-height:300px}.play .character img{width:clamp(75px,25%,115px);max-height:135px}.dormFriend{width:clamp(40px,13%,65px);height:clamp(49px,17%,78px)}}
+
+/* v1.8: 터치 콤보 게이지 */
+.playtop .comboBox{flex:1;min-width:150px;max-width:240px;display:flex;flex-direction:column;gap:5px}
+.comboMeta{display:flex;align-items:center;justify-content:space-between;gap:6px}.comboMeta #comboNext{font-size:11px;font-weight:800;color:#fff5cc;white-space:nowrap}
+.comboTrack{width:100%;height:11px;background:#091323;border:1px solid #8a9db9;border-radius:20px;overflow:hidden;box-shadow:inset 0 1px 3px #0008}
+#comboFill{height:100%;width:0%;background:linear-gradient(90deg,#f8c64b,#ff873b);border-radius:20px;transition:width .13s linear;box-shadow:0 0 8px #ffb84d88}

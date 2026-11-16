@@ -116,7 +116,7 @@ const fmt=n=>{
  return parts.join(' ');
 };
 const safe=n=>Number.isFinite(n)?Math.max(0,n):Number.MAX_VALUE;
-const level=()=>s.tapLevel;
+const level=()=>s.tapLevel+1;
 const tapCost=()=>safe(Math.floor(10*Math.pow(1.18,s.tapLevel)));
 const friendCost=i=>safe(Math.floor(friendPrices[i]*Math.pow(1.18,s.friends[i])));
 const baseTap=()=>((s.tapLevel+1)*(s.tapLevel+2)/2+1);
@@ -289,7 +289,7 @@ function addItem(name,description,buttonText,onClick,disabled=false,imageSrc=nul
 function actionBuy(price,callback,label){if(!spend(price)){msg('짬이 부족합니다');return}callback();msg(label+' 완료!');save();render()}
 function drawItems(){const el=$('items');el.replaceChildren();updateRecords();$('panelTitle').textContent=titles[tab][0];$('panelSub').textContent=titles[tab][1];$('panelCount').textContent=['growth','prestige','story','achievements','encyclopedia','ranking'].includes(tab)?'':countOwned(tab)+' / '+({friends:17,zones:7,collect:7,gifts:17,clubs:15,places:10,power:7,relics:5}[tab]||0);
  if(tab==='story'){displayStory(el)}else if(tab==='achievements'){displayAchievements(el)}else if(tab==='encyclopedia'){displayCatalog(el)}else if(tab==='ranking'){showLeaderboard(el)}else if(tab==='growth'){
- addItem('정신 차리기 · Lv.'+s.tapLevel,'강화할 때마다 정신 차리기 레벨 +1 · 터치 기본 수익 '+fmt(baseTap())+' 짬','강화 '+fmt(tapCost()),()=>actionBuy(tapCost(),()=>s.tapLevel++,'정신 차리기'),s.money<tapCost());
+ addItem('정신 차리기 · Lv.'+level(),'강화할 때마다 정신 차리기 레벨 +1 · 터치 기본 수익 '+fmt(baseTap())+' 짬','강화 '+fmt(tapCost()),()=>actionBuy(tapCost(),()=>s.tapLevel++,'정신 차리기'),s.money<tapCost());
 
  }else if(tab==='friends')friendNames.forEach((name,i)=>{const l=s.friends[i],unlocked=i===0||s.friends[i-1]>=10,price=friendCost(i);addItem(unlocked?(i+1)+'. '+name+' · Lv.'+l:(i+1)+'. ???',unlocked?`자동 수익 · Lv.20 터치 +${friendBonuses[i]}% · Lv.30 선물 해금`:'앞 친구 Lv.10 필요',unlocked?(l>0?'레벨업 ':'영입 ')+fmt(price):'🔒 미해금',()=>actionBuy(price,()=>s.friends[i]++,'친구 강화'),!unlocked||s.money<price,unlocked?friendImages[i]:'locked')});
  else if(tab==='zones')zoneNames.forEach((name,i)=>{const owned=s.zones[i],value=owned?zonePrices[i]+zonePrices[i]*ASSET_RATE_PER_SECOND*Math.max(0,(Date.now()-owned)/1000):0;addItem(name,owned?'현재 매각 가치 '+fmt(value)+' 짬 · 초당 +'+fmt(zonePrices[i]*ASSET_RATE_PER_SECOND):'구매가 '+fmt(zonePrices[i])+' 짬 · 초당 가치 +'+fmt(zonePrices[i]*ASSET_RATE_PER_SECOND),owned?'매각 '+fmt(value):'구매 '+fmt(zonePrices[i]),()=>{if(owned){earn(value);s.stats.sales++;delete s.zones[i];msg(name+' 매각 완료');save();render()}else actionBuy(zonePrices[i],()=>s.zones[i]=Date.now(),name+' 구매')},!owned&&s.money<zonePrices[i])});

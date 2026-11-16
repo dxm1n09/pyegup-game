@@ -1,8 +1,8 @@
-// Public browser configuration. Never put the service_role key here.
-// authDomain MUST be a domain you own and control, e.g. accounts.yourdomain.com.
-// Turn OFF email confirmation for this email-less username flow.
+// Supabase public client settings. Never place secret or service_role keys here.
+// example.com is an IANA-reserved example domain; these are synthetic identifiers,
+// not deliverable mailboxes. Email confirmation MUST be disabled in Supabase Auth.
 window.PYEGUP_SUPABASE_CONFIG={
- url:'',
- anonKey:'',
- authDomain:''
+ url:'https://nwqcjfefialyddgotckh.supabase.co',
+ anonKey:'sb_publishable_sdYrA-HH4HB7aUBQeHn7tg_CNmSiGfw',
+ authDomain:'example.com'
 };

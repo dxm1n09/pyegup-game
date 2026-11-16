@@ -434,3 +434,7 @@ html body .app .top #settingsBtn{margin-left:0!important}
 /* Swap the image inside the original tap character, never add a second character. */
 html body .app .play.bonus-active .character img{visibility:visible!important}
 html body .app .play .bonus-portrait{display:none!important}
+
+/* Keep the game at fixed visual scale on touch screens. */
+html,body,.app{touch-action:pan-y!important;-webkit-text-size-adjust:100%!important;text-size-adjust:100%!important}
+button,.character,.dormFriend{touch-action:manipulation!important}

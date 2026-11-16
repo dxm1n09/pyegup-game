@@ -358,6 +358,14 @@ function reactToCharacterTouch(target){
 }
 $('play').addEventListener('pointerdown',e=>{if(e.target.closest('a, input, select, textarea, button:not(#tap)'))return;e.preventDefault();reactToCharacterTouch(e.target);tap(e)});
 $('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(!b)return;tab=b.dataset.tab;if(tab==='ranking')window.pyegupCloud?.refreshLeaderboard?.();document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));render()});
+$('shareBtn').onclick=async()=>{
+ const url='https://dxm1n09.github.io/pyegup-game/';
+ try{
+  if(navigator.share){await navigator.share({title:'폐급 키우기 · 기숙사 편',text:'폐급 키우기 같이 하자!',url});}
+  else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(url);msg('게임 링크가 복사됐습니다!');}
+  else{window.prompt('게임 링크를 복사하세요',url);}
+ }catch(e){if(e?.name!=='AbortError')msg('공유할 수 없습니다. 링크를 복사해 주세요.')}
+};
 $('settingsBtn').onclick=()=>$('settings').showModal();
 $('storyClose').onclick=()=>{storyPage=null;renderStoryViewer()};
 $('storySkip').onclick=()=>{storyPage=null;save();renderStoryViewer()};

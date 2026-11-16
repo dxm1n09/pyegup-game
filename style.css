@@ -15,3 +15,6 @@ main{display:flex;flex-direction:column;gap:10px}
 /* v1.2: 화면 방향을 세로형으로 유지하고 실제 업로드된 사진을 선명하게 표시 */
 .play{background-repeat:no-repeat;background-color:#171b25}
 @media(max-width:520px){.app{width:100%;max-width:520px}.play{width:100%;aspect-ratio:828/1472;min-height:0}.character img{filter:drop-shadow(0 0 2px #10131a) drop-shadow(0 7px 11px #000a)}}
+
+/* v1.3: 배경 전체 터치 영역 */
+.play{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}

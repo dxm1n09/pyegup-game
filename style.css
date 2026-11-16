@@ -403,3 +403,13 @@ html body,html body *,html body *::before,html body *::after{font-family:system-
 
 /* Flat 2D typography: remove all raised/3D text and text shadows. */
 html body,html body *,html body *::before,html body *::after{text-shadow:none!important;-webkit-text-stroke:0!important;filter:none!important}
+
+/* Offline earnings card */
+html body .offline-reward[hidden]{display:none!important}
+html body .offline-reward{position:fixed!important;inset:0!important;z-index:99999!important;display:flex!important;align-items:center!important;justify-content:center!important;background:rgba(0,0,0,.68)!important;padding:18px!important}
+html body .offline-card{box-sizing:border-box!important;width:min(100%,390px)!important;padding:24px 18px!important;background:#f5e1ba!important;color:#111!important;border:4px solid #222!important;text-align:center!important;border-radius:0!important}
+html body .offline-card h2{font-size:23px!important;margin:0 0 16px!important}
+html body .offline-card p{font-size:16px!important;margin:0 0 20px!important}
+html body .offline-card strong{display:block!important;font-size:32px!important;color:#222!important;margin-bottom:12px!important}
+html body .offline-card small{display:block!important;margin-bottom:22px!important}
+html body .offline-card button{display:block!important;width:100%!important;padding:13px!important;font-size:17px!important;background:#ffeb00!important;color:#111!important;border:2px solid #111!important;border-radius:0!important}

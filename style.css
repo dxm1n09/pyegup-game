@@ -26,3 +26,7 @@ main{display:flex;flex-direction:column;gap:10px}
 /* 친구 1~10: 업로드한 사진을 순서대로 담은 경량 이미지 스프라이트 */
 .friend-photo{display:block;width:64px;height:76px;flex:0 0 64px;object-fit:unset;background-image:url('assets/characters/friends-sprite.jpg');background-repeat:no-repeat;background-size:500% 200%;background-color:#233044;border:2px solid #6e84a7;border-radius:10px;filter:drop-shadow(0 2px 4px #0008)}
 @media(max-width:390px){.friend-photo{width:48px;height:57px;flex-basis:48px}}
+
+/* v1.5: 모든 친구 사진 스프라이트(4열×5행), 13번 차지훈 제외 */
+.friend-photo{width:64px;height:66px;flex:0 0 64px;background-image:url('assets/characters/friends-sprite.jpg');background-size:400% 500%;background-color:#e5e8ee;border-color:#e4bc6d;border-radius:12px}
+@media(max-width:390px){.friend-photo{width:49px;height:51px;flex-basis:49px}}

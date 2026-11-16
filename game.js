@@ -105,7 +105,15 @@ function load(){let raw;try{raw=JSON.parse(localStorage.getItem(KEY))}catch{};le
  return s;
 }
 let s=load(),tab='growth',storyPage=null,collectionCategory='friends',lastFrame=Date.now(),lastTap=0,streak=0,renderAt=0;
-const fmt=n=>{if(!Number.isFinite(n))return '매우 큰 수';if(n<10000)return Math.floor(n).toLocaleString('ko-KR');const units=[[1e20,'해'],[1e16,'경'],[1e12,'조'],[1e8,'억'],[1e4,'만']];for(const [v,u] of units){if(n>=v){const a=n/v;return (a>=100?Math.floor(a).toLocaleString('ko-KR'):a>=10?a.toFixed(1):a.toFixed(2)).replace(/\.0+$/,'')+u}}return Math.floor(n).toLocaleString('ko-KR')};
+const fmt=n=>{
+ if(!Number.isFinite(n))return '매우 큰 수';
+ const amount=Math.max(0,Math.floor(n));
+ if(amount<1000)return amount.toLocaleString('ko-KR');
+ const units=[[1e20,'해'],[1e16,'경'],[1e12,'조'],[1e8,'억'],[1e4,'만'],[1e3,'천'],[1e2,'백'],[10,'십'],[1,'']];
+ let rest=amount;const parts=[];
+ for(const [value,label] of units){const q=Math.floor(rest/value);if(q>0){parts.push(q.toLocaleString('ko-KR')+label);rest-=q*value}if(parts.length===2)break}
+ return parts.join(' ');
+};
 const safe=n=>Number.isFinite(n)?Math.max(0,n):Number.MAX_VALUE;
 const level=()=>1+Math.floor(Math.sqrt(s.runEarned/25));
 const tapCost=()=>safe(Math.floor(10*Math.pow(1.18,s.tapLevel)));

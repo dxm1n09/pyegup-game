@@ -224,3 +224,10 @@ html body .app .friend-photo,html body .authGate .authCard{
 
 /* Screenshot-inspired Korean game typography. */
 html body,html body button,html body input,html body select,html body textarea,html body dialog{font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',sans-serif!important;letter-spacing:.015em}
+
+/* Let individual sprites receive touch without blocking the rest of the game. */
+.play .character{pointer-events:none!important}
+.play .character img{pointer-events:auto!important;touch-action:manipulation!important}
+.play .dormFriends{pointer-events:none!important}
+.play .dormFriend{pointer-events:auto!important;touch-action:manipulation!important}
+.play .dormFriendImage,.play .friendPortraitPng{pointer-events:auto!important}

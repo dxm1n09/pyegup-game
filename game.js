@@ -4,8 +4,18 @@ const $=id=>document.getElementById(id);
 const friendNames=['정태우','추주형','박지훈','정다민','노현승','이세민','홍석진','구준수','천재우','윤서준','이준영','윤지호','차지훈','조서현','송창빈','우도현','나단비'];
 const friendImages=friendNames.map((_,i)=>i+1);
 const friendPortraitPath=i=>'assets/characters/friend-'+String(i+1).padStart(2,'0')+'.png';
-const portraitAvailability=new Map();
-function loadFriendPortrait(i,el){const path=friendPortraitPath(i);const cached=portraitAvailability.get(i);if(cached===false)return;const apply=()=>{if(!el.isConnected)return;el.style.backgroundImage='url("'+path+'")';el.style.backgroundSize='contain';el.style.backgroundPosition='center';el.style.backgroundRepeat='no-repeat'};if(cached===true){apply();return}const img=new Image();img.onload=()=>{portraitAvailability.set(i,true);apply()};img.onerror=()=>portraitAvailability.set(i,false);img.src=path}
+function loadFriendPortrait(i,el){
+  // Render the individual PNG directly, never a compressed CSS sprite.
+  const img=document.createElement('img');
+  img.className='friendPortraitPng';
+  img.alt='';
+  img.decoding='async';
+  img.src=friendPortraitPath(i);
+  img.onerror=()=>{img.style.display='none'};
+  el.style.backgroundImage='none';
+  el.style.backgroundPosition='center';
+  el.append(img);
+}
 
 function renderDormFriends(){const layer=$('dormFriends');if(!layer)return;const owned=friendNames.map((name,i)=>({name,i,level:s.friends[i]})).filter(f=>f.level>0);const key=owned.map(f=>f.i).join(',');if(layer.dataset.friends===key)return;layer.dataset.friends=key;layer.replaceChildren();owned.forEach(({name,i},position)=>{const el=document.createElement('span');el.className='dormFriend';el.setAttribute('role','img');el.setAttribute('aria-label',name+' 친구');el.title=name;const img=document.createElement('span');img.className='dormFriendImage';img.style.imageRendering='auto';if(i===12){img.style.backgroundImage="url('assets/characters/cha-jihoon.jpg?v=1')";img.style.backgroundSize='contain';img.style.backgroundPosition='center'}else{img.style.backgroundPosition=`${(i%4)*100/3}% ${Math.floor(i/4)*25}%`;}el.append(img);loadFriendPortrait(i,img);const col=position%4;const row=Math.floor(position/4);el.style.left=(5+col*24)+'%';el.style.bottom=(4+row*18)+'%';el.style.animationDelay=((position%5)*-.31)+'s';layer.append(el)})}
 

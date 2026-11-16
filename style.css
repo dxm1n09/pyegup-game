@@ -231,3 +231,28 @@ html body,html body button,html body input,html body select,html body textarea,h
 .play .dormFriends{pointer-events:none!important}
 .play .dormFriend{pointer-events:auto!important;touch-action:manipulation!important}
 .play .dormFriendImage,.play .friendPortraitPng{pointer-events:auto!important}
+
+/* Story, achievements, encyclopedia and ranking: flat rectangular layout. */
+.archive-row{display:flex;flex-direction:column;gap:4px;padding:12px 8px;background:#f0f1e9!important;color:#29362d!important;margin:0 0 7px;min-height:52px;position:relative}
+.archive-row strong{display:block;font-size:15px;padding-right:60px}
+.archive-row p{font-size:12px;line-height:1.5;margin:0;color:#5b665d}
+.archive-row.archive-locked{opacity:.5}
+.archive-row:has(.friend-photo){min-height:83px;padding-left:78px}
+.archive-row .friend-photo{position:absolute;left:8px;top:6px;width:60px;height:68px}
+.archive-row .archive-button{position:absolute;right:8px;top:10px}
+.archive-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-bottom:12px}
+.archive-button{background:#527461!important;color:#fff!important;border:0!important;padding:9px 11px;cursor:pointer;font:inherit;border-radius:0!important;box-shadow:none!important}
+.archive-button.selected{background:#354f40!important}
+.archive-button:disabled{background:#d6d9d1!important;color:#67736a!important;cursor:default}
+.archive-count{font-size:13px;color:#576958;margin:2px 0 12px}
+.story-viewer[hidden]{display:none!important}
+.story-viewer{position:fixed;inset:0;z-index:1800;background:#1d231edc;display:flex;align-items:center;justify-content:center;padding:14px}
+.story-paper{display:flex;flex-direction:column;max-height:min(82vh,700px);overflow:auto;width:min(100%,510px);background:#fffdf7;color:#283329;padding:22px;box-shadow:none!important;border:0!important;border-radius:0!important}
+.story-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.story-title-row h2{margin:0;font-size:21px}
+.story-title-row button{background:#e7eae1;color:#344737;border:0!important;padding:5px 12px;font-size:24px;cursor:pointer}
+#storyProgress{color:#6b796f;font-size:13px;margin:12px 0}
+#storyText{white-space:pre-line;line-height:1.8;overflow:auto;flex:1;min-height:145px;font-size:15px}
+.story-controls{display:flex;gap:8px;margin-top:20px}
+.story-controls button{flex:1;min-height:42px;background:#527461;color:#fff;border:0!important;font:inherit;cursor:pointer}
+.story-controls button:disabled{opacity:.45}

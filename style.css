@@ -400,3 +400,6 @@ html body .app footer{padding:6px 10px!important;background:#777!important;color
 
 /* Restore standard system Korean UI font throughout the game. */
 html body,html body *,html body *::before,html body *::after{font-family:system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif!important}
+
+/* Flat 2D typography: remove all raised/3D text and text shadows. */
+html body,html body *,html body *::before,html body *::after{text-shadow:none!important;-webkit-text-stroke:0!important;filter:none!important}

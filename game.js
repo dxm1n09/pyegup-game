@@ -1,5 +1,5 @@
 'use strict';
-const KEY='pyegup-dorm-v2',OLD='pyegup-dorm-v1',OFFLINE=.7/60,MAX_AWAY=Number.MAX_SAFE_INTEGER;
+const KEY='pyegup-dorm-v2',OLD='pyegup-dorm-v1',OFFLINE=.007,MAX_AWAY=Number.MAX_SAFE_INTEGER;
 const $=id=>document.getElementById(id);
 const friendNames=['정태우','추주형','박지훈','정다민','노현승','이세민','홍석진','구준수','천재우','윤서준','이준영','윤지호','차지훈','조서현','송창빈','우도현','나단비'];
 const friendImages=friendNames.map((_,i)=>i+1);

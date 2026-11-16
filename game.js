@@ -199,7 +199,7 @@ function displayStory(container){
   const row=document.createElement('div');row.className='archive-row';
   const title=document.createElement('strong');title.textContent=available?chapter.title:'잠김 · Lv.'+chapter.level;
   const desc=document.createElement('p');desc.textContent=available?'Lv.'+chapter.level+' · 5장면 · '+(s.storyRead.includes(i)?'완독':'열람 가능'):'Lv.'+chapter.level+' 달성 시 공개';
-  const b=document.createElement('button');b.className='archive-button';b.textContent=available?'읽기':'잠김';b.disabled=!available;
+  const b=document.createElement('button');b.className='archive-button';b.textContent=available?(s.storyRead.includes(i)?'다시 보기':'읽기'):'잠김';b.disabled=!available;
   b.onclick=()=>{if(!s.storyShown.includes(i))s.storyShown.push(i);storyPage={chapter:i,scene:0};renderStoryViewer();save()};
   row.append(title,desc,b);container.append(row);
  });

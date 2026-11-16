@@ -418,3 +418,7 @@ html body .app .bonus-status{position:absolute!important;z-index:22!important;le
 html body .app .bonus-status.active{background:#ffeb00!important;color:#111!important}
 html body .app .bonus-portrait[hidden]{display:none!important}
 html body .app .bonus-portrait{position:absolute!important;z-index:21!important;left:50%!important;bottom:7%!important;transform:translateX(-50%)!important;width:48%!important;height:75%!important;object-fit:contain!important;object-position:center bottom!important;pointer-events:none!important}
+
+html body .app .bonus-status[hidden]{display:none!important}
+html body .app .play.bonus-active .character img{visibility:hidden!important}
+html body .app .play.bonus-active .bonus-portrait{display:block!important;z-index:100!important;left:50%!important;bottom:7%!important;width:56%!important;height:78%!important;object-fit:contain!important;pointer-events:none!important}

@@ -26,5 +26,6 @@ if(!cfg?.apiKey||!cfg?.authDomain||!cfg?.projectId||!cfg?.appId){
  async function authenticate(register){const email=el('authEmail').value.trim(),password=el('authPassword').value;if(!email||password.length<6){message('이메일과 6자 이상의 비밀번호를 입력하세요.');return}lock(true);message('계정 확인 중…');try{if(register)await createUserWithEmailAndPassword(auth,email,password);else await signInWithEmailAndPassword(auth,email,password)}catch(e){message('로그인 실패: '+e.code);lock(false)}}
  login.onclick=()=>authenticate(false);signup.onclick=()=>authenticate(true);
  el('logoutBtn').onclick=async()=>{if(!confirm('로그아웃할까요?'))return;window.pyegupAccount.saveNow();clearTimeout(timer);await flush();ready=false;uid=null;await signOut(auth);el('settings').close();window.pyegupAccount.resetForAccount()};
- importBtn.onclick=async()=>{if(!ready||!uid)return;const local=originalLocalSave;if(!local){message('이 기기에 가져올 저장 데이터가 없습니다.');gate.hidden=false;return}if(!confirm('현재 계정의 클라우드 저장을 이 기기의 저장 데이터로 덮어쓸까요?'))return;window.pyegupAccount.loadCloud(local);queueSave(window.pyegupAccount.snapshot());await flush();message('기존 저장 데이터 가져오기 완료')};
+ const doImport=async()=>{if(!ready||!uid)return;const local=originalLocalSave;if(!local){message('이 기기에 가져올 저장 데이터가 없습니다.');gate.hidden=false;return}if(!confirm('현재 계정의 클라우드 저장을 이 기기의 저장 데이터로 덮어쓸까요?'))return;window.pyegupAccount.loadCloud(local);queueSave(window.pyegupAccount.snapshot());await flush();message('기존 저장 데이터 가져오기 완료');el('settings').close()};
+ importBtn.onclick=doImport;el('importLocalSettingsBtn').onclick=doImport;
 }

@@ -37,3 +37,14 @@ main{display:flex;flex-direction:column;gap:10px}
 .play>.float .floatAmount{display:block;color:#fff0a0;font-size:17px;font-weight:900;line-height:1.15;text-shadow:-1px -1px #16110b,1px 1px #16110b,0 2px 4px #000}
 @keyframes jamFloat{0%{opacity:0;transform:translate(-50%,-42%) scale(.72)}15%{opacity:1;transform:translate(-50%,-55%) scale(1.13)}45%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),-130px) scale(.98)}}
 @media(prefers-reduced-motion:reduce){.play>.float{animation:jamFloat .85s ease-out forwards!important;display:flex!important}}
+
+/* v1.7: 기숙사에 고용한 친구 등장. 진수(메인 캐릭터)는 작게. */
+.play .characterzone{isolation:isolate;min-height:340px}
+.play .character{z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;pointer-events:none}
+.play .character img{width:clamp(80px,27%,145px);max-height:170px;object-fit:contain;filter:drop-shadow(0 0 2px #151515) drop-shadow(0 5px 6px #0009)}
+.play .character .tapHint{font-size:11px;padding:5px 10px}
+.dormFriends{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.dormFriend{position:absolute;width:clamp(43px,14%,76px);height:clamp(52px,18%,91px);pointer-events:none;animation:dormIdle 3.5s ease-in-out infinite;filter:drop-shadow(0 0 1.5px #141414) drop-shadow(0 4px 4px #0009)}
+.dormFriendImage{display:block;width:100%;height:100%;background-image:url('assets/characters/friends-sprite.jpg?v=17');background-size:400% 500%;background-repeat:no-repeat}
+@keyframes dormIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@media(max-width:520px){.play .characterzone{min-height:300px}.play .character img{width:clamp(75px,25%,115px);max-height:135px}.dormFriend{width:clamp(40px,13%,65px);height:clamp(49px,17%,78px)}}

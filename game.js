@@ -33,7 +33,6 @@ const fmt=n=>{if(!Number.isFinite(n))return '매우 큰 수';if(n<10000)return M
 const safe=n=>Number.isFinite(n)?Math.max(0,n):Number.MAX_VALUE;
 const level=()=>1+Math.floor(Math.sqrt(s.runEarned/25));
 const tapCost=()=>safe(Math.floor(10*Math.pow(1.18,s.tapLevel)));
-const autoCost=()=>safe(Math.floor(25*Math.pow(1.22,s.autoLevel)));
 const friendCost=i=>safe(Math.floor(friendPrices[i]*Math.pow(1.18,s.friends[i])));
 const baseTap=()=>((s.tapLevel+1)*(s.tapLevel+2)/2+1);
 const bonusRelic=kind=>relics.reduce((m,r,i)=>s.relics.includes(i)&&(r.type===kind||r.type==='all')?m*(1+r.bonus):m,1);
@@ -42,7 +41,7 @@ const giftTapBonus=()=>s.gifts.reduce((m,i)=>m+giftBonuses[i]/100,1);
 const permanent=()=>1+s.prestiges*.1;
 const tapGain=()=>safe(Math.floor(baseTap()*friendTapBonus()*giftTapBonus()*bonusRelic('tap')*permanent()));
 const friendIncome=()=>s.friends.reduce((m,l,i)=>m+(l?friendPrices[i]/100*Math.pow(1.12,l-1)*l:0),0);
-const autoGain=()=>safe(Math.floor((s.autoLevel*5*Math.pow(1.14,s.autoLevel)+friendIncome()+s.power.reduce((m,i)=>m+powerIncome[i],0))*bonusRelic('auto')*permanent()*(1+s.clubs.length*.02+s.places.length*.03)));
+const autoGain=()=>safe(Math.floor((friendIncome()+s.power.reduce((m,i)=>m+powerIncome[i],0))*bonusRelic('auto')*permanent()*(1+s.clubs.length*.02+s.places.length*.03)));
 const combo=()=>streak>=940?1.5:streak>=610?1.4:streak>=280?1.3:streak>=80?1.2:1;
 function earn(n){if(!Number.isFinite(n)||n<=0)return;s.money=safe(s.money+n);s.total=safe(s.total+n);s.runEarned=safe(s.runEarned+n)}
 function spend(n){if(!Number.isFinite(n)||s.money<n)return false;s.money=Math.max(0,s.money-n);return true}
@@ -54,7 +53,6 @@ function actionBuy(price,callback,label){if(!spend(price)){msg('짬이 부족합
 function drawItems(){const el=$('items');el.replaceChildren();$('panelTitle').textContent=titles[tab][0];$('panelSub').textContent=titles[tab][1];$('panelCount').textContent=tab==='growth'||tab==='prestige'?'':countOwned(tab)+' / '+({friends:17,zones:7,collect:7,gifts:17,clubs:15,places:10,power:7,relics:5}[tab]||0);
  if(tab==='growth'){
  addItem('정신 차리기 · Lv.'+s.tapLevel,'터치 기본 수익 '+fmt(baseTap())+' 짬','강화 '+fmt(tapCost()),()=>actionBuy(tapCost(),()=>s.tapLevel++,'정신 차리기'),s.money<tapCost());
- addItem('자동 짬 생산 · Lv.'+s.autoLevel,'친구 외 기본 자동 수익 강화','강화 '+fmt(autoCost()),()=>actionBuy(autoCost(),()=>s.autoLevel++,'자동 짬 생산'),s.money<autoCost());
  const p=document.createElement('p');p.className='note';p.textContent='콤보는 연속 터치로 올라갑니다. 보너스 단계까지 필요한 터치 횟수는 표시하지 않습니다. 레벨 상한과 학년 구분은 없습니다.';el.append(p);
  }else if(tab==='friends')friendNames.forEach((name,i)=>{const l=s.friends[i],unlocked=i===0||s.friends[i-1]>=10,price=friendCost(i);addItem((i+1)+'. '+name+' · Lv.'+l,unlocked?`자동 수익 · Lv.20 터치 +${friendBonuses[i]}% · Lv.30 선물 해금`:`이전 친구 Lv.10 필요`,unlocked?'강화 '+fmt(price):'잠김',()=>actionBuy(price,()=>s.friends[i]++,'친구 강화'),!unlocked||s.money<price)});
  else if(tab==='zones')zoneNames.forEach((name,i)=>{const owned=s.zones[i],value=owned?zonePrices[i]+zoneRise[i]*Math.max(0,(Date.now()-owned)/1000):0;addItem(name,owned?'현재 매각 가치 '+fmt(value)+' 짬 · 초당 +'+fmt(zoneRise[i]):'구매가 '+fmt(zonePrices[i])+' 짬 · 초당 가치 +'+fmt(zoneRise[i]),owned?'매각 '+fmt(value):'구매 '+fmt(zonePrices[i]),()=>{if(owned){earn(value);delete s.zones[i];msg(name+' 매각 완료');save();render()}else actionBuy(zonePrices[i],()=>s.zones[i]=Date.now(),name+' 구매')},!owned&&s.money<zonePrices[i])});
@@ -76,7 +74,7 @@ function drawItems(){const el=$('items');el.replaceChildren();$('panelTitle').te
 function drawRelic(cost,n){if(s.mana<cost)return;s.mana-=cost;const got=[];for(let j=0;j<n;j++){const i=Math.floor(Math.random()*relics.length);if(!s.relics.includes(i)){s.relics.push(i);got.push(relics[i].name)}}msg(got.length?'유물 획득: '+got.join(', '):'이미 보유한 유물만 나왔습니다');save();render()}
 function render(){const now=Date.now();$('money').textContent=fmt(s.money);$('income').textContent=fmt(autoGain());$('level').textContent=fmt(level());$('tapIncome').textContent=fmt(tapGain()*combo());$('lifetime').textContent=fmt(s.total);$('prestigeTag').textContent='재입학 '+s.prestiges+'회';$('comboTag').textContent='콤보 ×'+combo().toFixed(1);drawItems();renderAt=now}
 function tap(ev){const now=Date.now();if(now-lastTap>1800)streak=0;streak++;lastTap=now;s.taps++;if(s.taps%250===0){s.mana++;msg('마나 1개 획득!')}const value=Math.floor(tapGain()*combo());earn(value);$('money').textContent=fmt(s.money);$('level').textContent=fmt(level());$('tapIncome').textContent=fmt(tapGain()*combo());$('comboTag').textContent='콤보 ×'+combo().toFixed(1);const f=document.createElement('span');f.className='float';f.textContent='+'+fmt(value);f.style.setProperty('--dx',(Math.random()*110-55)+'px');$('floaters').append(f);setTimeout(()=>f.remove(),700);if(now-renderAt>600)render()}
-$('tap').addEventListener('pointerdown',e=>{e.preventDefault();tap(e)});
+$('play').addEventListener('pointerdown',e=>{if(e.target.closest('a, input, select, textarea, button:not(#tap)'))return;e.preventDefault();tap(e)});
 $('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(!b)return;tab=b.dataset.tab;document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));render()});
 $('saveBtn').onclick=save;$('settingsBtn').onclick=()=>$('settings').showModal();
 $('exportBtn').onclick=()=>{save();const blob=new Blob([JSON.stringify(s,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='폐급키우기-저장.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000)};

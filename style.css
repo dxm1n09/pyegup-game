@@ -207,3 +207,16 @@ html body .app button:focus-visible,html body .app input:focus-visible,
 html body .authGate button:focus-visible,html body .authGate input:focus-visible{
  outline:2px solid #527461!important;outline-offset:2px!important;
 }
+
+/* Square-edged flat UI: remove rounding without restoring borders or shadows. */
+html body .app,html body .app *,html body .app *::before,html body .app *::after,
+html body .authGate,html body .authGate *,html body dialog,html body dialog *{
+ border-radius:0!important;box-shadow:none!important;
+}
+html body .app .play,html body .app .hud>div,html body .app .tabs,
+html body .app .tabs button,html body .app .panel,html body .app .item button,
+html body .app .bigbutton,html body .app .pill,html body .app .comboBox,
+html body .app .comboTrack,html body .app #comboFill,
+html body .app .friend-photo,html body .authGate .authCard{
+ border-radius:0!important;
+}

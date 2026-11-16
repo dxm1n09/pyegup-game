@@ -430,3 +430,7 @@ html body .app .play.bonus-active .bonus-portrait{width:clamp(43px,14%,76px)!imp
 /* Header share action */
 html body .app .top #shareBtn{margin-left:auto!important;margin-right:8px!important;min-width:54px!important;padding:6px 10px!important;background:#f5dfb4!important;color:#111!important;border:2px solid #111!important;border-radius:0!important;font-size:14px!important;font-weight:800!important;white-space:nowrap!important}
 html body .app .top #settingsBtn{margin-left:0!important}
+
+/* Swap the image inside the original tap character, never add a second character. */
+html body .app .play.bonus-active .character img{visibility:visible!important}
+html body .app .play .bonus-portrait{display:none!important}

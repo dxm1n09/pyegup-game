@@ -62,3 +62,6 @@ main{display:flex;flex-direction:column;gap:10px}
 .playtop .comboTrack{display:block!important;position:relative;width:100%!important;height:19px!important;min-height:19px!important;background:#111c2e!important;border:2px solid #ffe09b!important;border-radius:99px!important;overflow:hidden!important;box-shadow:0 1px 5px #000b!important}
 .playtop #comboFill{display:block!important;height:100%!important;min-height:15px;background:linear-gradient(90deg,#ffde58,#ff7d35)!important;box-shadow:0 0 8px #ffb548a0!important}
 .playtop #comboNext{font-size:12px!important;color:#fff!important}
+
+/* 미해금 친구는 사진 대신 물음표로 표시 */
+.item .friend-photo.friend-locked{display:grid;place-items:center;background:none!important;border:0!important;color:#d90000;font-size:39px;font-weight:900;filter:none!important;text-shadow:0 1px 1px #fff}

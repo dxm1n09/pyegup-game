@@ -355,3 +355,46 @@ html body .story-controls button:nth-child(3){background:#d4d4d4!important}
 html body .authGate .authCard,html body dialog{background:#f5dfb5!important;color:#111!important;border:3px solid #333!important}
 html body .authGate .authCard button{background:#ffe000!important;color:#111!important}
 html body .app .top,html body .app .hud,html body .app .tabs,html body .app .panel,html body .app .item,html body .app .archive-row{border-radius:0!important}
+
+/* Reference-matched old-school clicker layout, not a modern dashboard. */
+html body{background:#222!important}
+html body .app{max-width:558px!important;margin:0 auto!important;padding:0 0 24px!important;background:#aaa!important}
+html body .app .top{height:64px!important;background:#050505!important;padding:9px 11px!important;display:flex!important;align-items:center!important;border-bottom:3px solid #f3f3f3!important}
+html body .app .top .brand-logo{display:none!important}
+html body .app .top .brand-title h1{font-size:29px!important;font-weight:900!important;color:#fff!important;text-shadow:2px 2px #777!important}
+html body .app .top .brand-title small{display:none!important}
+html body .app .top .iconbtn{background:#ffea00!important;border:2px solid #111!important;padding:5px 9px!important}
+html body .app .hud{min-height:78px!important;display:grid!important;grid-template-columns:1.7fr 1fr 1fr!important;background:#344458!important;gap:0!important;border-bottom:5px solid #111!important;padding:7px 9px!important}
+html body .app .hud>div:nth-child(n){background:transparent!important;min-width:0!important;padding:5px!important;text-align:right!important}
+html body .app .hud>div:first-child{text-align:left!important}
+html body .app .hud span{color:#8effaa!important;font-size:12px!important}
+html body .app .hud strong{color:#ffe600!important;font-size:clamp(18px,4.4vw,27px)!important;overflow:hidden!important}
+html body .app main{display:flex!important;flex-direction:column!important;gap:0!important}
+html body .app .play{order:1!important;position:relative!important;aspect-ratio:1 / 1.05!important;min-height:0!important;max-height:none!important;border:0!important;border-bottom:5px solid #111!important;border-radius:0!important;margin:0!important;background-position:center center!important}
+html body .app .playtop{position:absolute!important;top:7px!important;left:7px!important;right:auto!important;z-index:9!important;background:#f8e3ae!important;padding:4px!important;border:2px solid #111!important}
+html body .app .playtop .pill{background:transparent!important;color:#111!important;font-size:12px!important;padding:0!important}
+html body .app .playbottom{position:absolute!important;top:7px!important;right:7px!important;bottom:auto!important;background:#fff!important;color:#111!important;padding:4px 7px!important;border:2px solid #111!important;font-size:11px!important}
+html body .app .play .characterzone{height:100%!important;min-height:0!important}
+html body .app .combo-strip{order:2!important;background:#ffda57!important;padding:7px 9px!important;border-top:3px solid #222!important;border-bottom:5px solid #777!important;width:100%!important}
+html body .app .combo-strip .comboBox{display:flex!important;flex-direction:column!important;gap:4px!important;max-width:none!important;width:100%!important}
+html body .app .combo-strip .comboHeading{display:none!important}
+html body .app .combo-strip .comboMeta{display:flex!important;justify-content:space-between!important}
+html body .app .combo-strip .pill{background:transparent!important;color:#111!important;border:0!important;padding:0!important;font-size:14px!important}
+html body .app .combo-strip #comboNext{color:#111!important;font-size:13px!important}
+html body .app .combo-strip .comboTrack{height:19px!important;min-height:19px!important;background:#363636!important;border:2px solid #fff!important}
+html body .app .combo-strip #comboFill{height:100%!important;min-height:0!important;background:#9cff79!important}
+html body .app .tabs{order:3!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;padding:8px!important;background:#aaa!important;width:100%!important;border:0!important}
+html body .app .tabs button,html body .app .tabs button:nth-child(n){width:100%!important;min-width:0!important;min-height:58px!important;background:#f4dfb6!important;border:3px solid #f7f7f7!important;padding:8px 2px!important;font-size:14px!important;font-weight:900!important;color:#111!important;white-space:normal!important}
+html body .app .tabs button[data-tab="friends"]{background:#a1ff7e!important}
+html body .app .tabs button[data-tab="relics"]{background:#ffeb00!important}
+html body .app .tabs button.active{border:3px solid #111!important;background:#ffeb00!important}
+html body .app .panel{order:4!important;width:100%!important;background:#aaa!important;border:0!important;padding:4px 8px!important}
+html body .app .panelhead{background:#777!important;padding:5px 8px!important}
+html body .app .panelhead h2{font-size:15px!important}
+html body .app .panelhead p{font-size:11px!important}
+html body .app .item,html body .app .item:nth-child(n){min-height:83px!important;background:#f5e1ba!important;border:3px solid #555!important;padding:9px!important;margin:4px 0!important}
+html body .app .item button{min-width:105px!important;background:#ffe100!important;border:3px outset #fff!important;font-size:13px!important}
+html body .app .item button:disabled{background:#ccc!important;border:3px outset #eee!important}
+html body .app .archive-row,html body .app .archive-row:nth-child(n){background:#f5e1ba!important;border:3px solid #555!important;padding:10px!important;margin:4px 0!important}
+html body .app footer{padding:6px 10px!important;background:#777!important;color:#fff!important}
+@media(max-width:400px){html body .app .tabs button,html body .app .tabs button:nth-child(n){font-size:12px!important;min-height:54px!important}html body .app .hud strong{font-size:18px!important}}

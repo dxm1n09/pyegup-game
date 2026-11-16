@@ -88,7 +88,7 @@ const storyChapters=[
 ];
 
 const titles={growth:['성장','터치 강화와 자동 수익을 키우세요.'],friends:['친구','이전 친구 Lv.10 달성 시 다음 친구 해금'],zones:['학교 구역','구매 후 가치가 초당 상승합니다.'],collect:['수집품','수집품을 모으고 되팔 수 있습니다.'],gifts:['친구들의 선물','해당 친구 Lv.30 달성 시 구매 가능'],clubs:['동아리 지배','구매 후 판매 가치가 초당 상승합니다. 판매 후 정가로 재구매할 수 있습니다.'],places:['학교 주변 시설','보유하는 동안 판매 가치가 상승하며, 판매 후 정가로 재구매합니다.'],power:['학교 권력','보유 시 판매 가치가 초당 상승합니다.'],relics:['유물','확인된 유물 5종만 우선 수록'],prestige:['재입학','레벨을 초기화하고 영구 보너스를 얻습니다.'],story:['스토리','레벨에 따라 이야기가 해금됩니다.'],achievements:['업적','달성 기록은 재입학해도 유지됩니다.'],encyclopedia:['도감','구매하거나 영입한 모든 종류의 기록입니다.'],ranking:['순위표','보유 짬과 보유 자산의 현재 시세를 합산합니다.']};
-const initial=()=>({money:0,total:0,runEarned:0,tapLevel:0,autoLevel:0,friends:Array(17).fill(0),zones:{},collect:{},gifts:[],clubs:[],places:[],power:[],assetBoughtAt:{clubs:{},places:{},power:{}},relics:[],prestiges:0,mana:0,taps:0,history:{friends:[],zones:[],collect:[],gifts:[],clubs:[],places:[],power:[],relics:[]},stats:{peakLevel:1,lifetimeTaps:0,peakCombo:0,sales:0},storyRead:[],achievements:[],last:Date.now()});
+const initial=()=>({money:0,total:0,runEarned:0,tapLevel:0,autoLevel:0,friends:Array(17).fill(0),zones:{},collect:{},gifts:[],clubs:[],places:[],power:[],assetBoughtAt:{clubs:{},places:{},power:{}},relics:[],prestiges:0,mana:0,taps:0,history:{friends:[],zones:[],collect:[],gifts:[],clubs:[],places:[],power:[],relics:[]},stats:{peakLevel:1,lifetimeTaps:0,peakCombo:0,sales:0},storyRead:[],storyShown:[],achievements:[],last:Date.now()});
 function load(){let raw;try{raw=JSON.parse(localStorage.getItem(KEY))}catch{};let s=initial();if(raw&&typeof raw==='object'){
  for(const k of ['money','total','runEarned','tapLevel','autoLevel','prestiges','mana','taps','last'])if(Number.isFinite(raw[k])&&raw[k]>=0)s[k]=raw[k];
  if(Array.isArray(raw.friends))s.friends=s.friends.map((_,i)=>Number.isFinite(raw.friends[i])?Math.max(0,Math.floor(raw.friends[i])):0);
@@ -98,6 +98,7 @@ function load(){let raw;try{raw=JSON.parse(localStorage.getItem(KEY))}catch{};le
  if(raw.history&&typeof raw.history==='object')for(const k of Object.keys(s.history))if(Array.isArray(raw.history[k]))s.history[k]=[...new Set(raw.history[k].filter(i=>Number.isInteger(i)&&i>=0&&i<({friends:17,zones:7,collect:7,gifts:17,clubs:15,places:10,power:7,relics:5}[k])))];
  if(raw.stats&&typeof raw.stats==='object')for(const k of Object.keys(s.stats))if(Number.isFinite(raw.stats[k])&&raw.stats[k]>=0)s.stats[k]=raw.stats[k];
  if(Array.isArray(raw.storyRead))s.storyRead=[...new Set(raw.storyRead.filter(i=>Number.isInteger(i)&&i>=0&&i<8))];
+ if(Array.isArray(raw.storyShown))s.storyShown=[...new Set(raw.storyShown.filter(i=>Number.isInteger(i)&&i>=0&&i<8))];
  if(Array.isArray(raw.achievements))s.achievements=[...new Set(raw.achievements.filter(x=>typeof x==='string'&&x.length<60))];
  s.stats.lifetimeTaps=Math.max(s.stats.lifetimeTaps,s.taps);
 
@@ -199,9 +200,18 @@ function displayStory(container){
   const title=document.createElement('strong');title.textContent=available?chapter.title:'잠김 · Lv.'+chapter.level;
   const desc=document.createElement('p');desc.textContent=available?'Lv.'+chapter.level+' · 5장면 · '+(s.storyRead.includes(i)?'완독':'열람 가능'):'Lv.'+chapter.level+' 달성 시 공개';
   const b=document.createElement('button');b.className='archive-button';b.textContent=available?'읽기':'잠김';b.disabled=!available;
-  b.onclick=()=>{storyPage={chapter:i,scene:0};renderStoryViewer()};
+  b.onclick=()=>{if(!s.storyShown.includes(i))s.storyShown.push(i);storyPage={chapter:i,scene:0};renderStoryViewer();save()};
   row.append(title,desc,b);container.append(row);
  });
+}
+function maybeOpenStory(){
+ if(storyPage||document.hidden||!s?.stats?.peakLevel)return;
+ const next=storyChapters.findIndex((chapter,i)=>s.stats.peakLevel>=chapter.level&&!s.storyShown.includes(i));
+ if(next<0)return;
+ s.storyShown.push(next);
+ storyPage={chapter:next,scene:0};
+ renderStoryViewer();
+ save();
 }
 function renderStoryViewer(){
  const viewer=$('storyViewer');if(!viewer)return;
@@ -289,7 +299,7 @@ function drawItems(){const el=$('items');el.replaceChildren();updateRecords();$(
  relics.forEach((r,i)=>{const owned=s.relics.includes(i);addItem(r.name,`${r.type==='tap'?'터치':r.type==='auto'?'자동':'전체'} 수익 +${Math.round(r.bonus*100)}%`,owned?'보유 중':'구매 '+fmt(r.price),()=>actionBuy(r.price,()=>s.relics.push(i),r.name+' 획득'),owned||s.money<r.price)});
  }else if(tab==='prestige'){
  const can=level()>=300;const p=document.createElement('p');p.className='note';p.textContent=`현재 레벨 ${fmt(level())} · 재입학 ${s.prestiges}회 · 영구 수익 배율 ×${permanent().toFixed(1)}. 레벨 300부터 재입학할 수 있습니다. 재입학하면 짬, 친구, 구매한 콘텐츠, 일반 강화가 초기화되고 영구 수익 +10%를 얻습니다. 재입학 보너스 수치는 임시 설정입니다.`;el.append(p);
- const b=document.createElement('button');b.className='bigbutton';b.textContent=can?'재입학하기 · 영구 수익 +10%':'레벨 300에 해금';b.disabled=!can;b.onclick=()=>{if(!confirm('재입학하면 현재 짬과 구매 콘텐츠가 초기화됩니다. 계속할까요?'))return;const next=initial();next.total=s.total;next.prestiges=s.prestiges+1;next.mana=s.mana;next.history=structuredClone(s.history);next.stats=structuredClone(s.stats);next.storyRead=[...s.storyRead];next.achievements=[...s.achievements];s=next;streak=0;save();render()};el.append(b);
+ const b=document.createElement('button');b.className='bigbutton';b.textContent=can?'재입학하기 · 영구 수익 +10%':'레벨 300에 해금';b.disabled=!can;b.onclick=()=>{if(!confirm('재입학하면 현재 짬과 구매 콘텐츠가 초기화됩니다. 계속할까요?'))return;const next=initial();next.total=s.total;next.prestiges=s.prestiges+1;next.mana=s.mana;next.history=structuredClone(s.history);next.stats=structuredClone(s.stats);next.storyRead=[...s.storyRead];next.storyShown=[...s.storyShown];next.achievements=[...s.achievements];s=next;streak=0;save();render()};el.append(b);
  }
 }
 function drawRelic(cost,n){if(s.mana<cost)return;s.mana-=cost;const got=[];for(let j=0;j<n;j++){const i=Math.floor(Math.random()*relics.length);if(!s.relics.includes(i)){s.relics.push(i);got.push(relics[i].name)}}msg(got.length?'유물 획득: '+got.join(', '):'이미 보유한 유물만 나왔습니다');save();render()}
@@ -331,8 +341,8 @@ $('storyNext').onclick=()=>{if(!storyPage)return;const idx=storyPage.chapter;if(
 $('resetBtn').onclick=()=>{if(!confirm('모든 게임 진행 상황을 초기화할까요?'))return;localStorage.removeItem(KEY);localStorage.removeItem(OLD);s=initial();$('settings').close();render();msg('게임을 초기화했습니다')};
 const away=Math.max(0,Math.min(MAX_AWAY,(Date.now()-s.last)/1000));if(away>10){const gained=Math.floor(autoGain()*away*OFFLINE);earn(gained);if(gained>0)msg('오프라인 수익 +'+fmt(gained)+' 짬 (경과 분 × 0.7 × 초당 수익)')}
 let hiddenSince=document.hidden?Date.now():null;
-lastFrame=Date.now();setInterval(()=>{const now=Date.now(),dt=Math.min(5,(now-lastFrame)/1000);lastFrame=now;if(document.hidden)return;if(lastTap&&now-lastTap>650&&streak>0){streak=Math.max(0,streak-24*dt);updateComboUI();$('tapIncome').textContent=fmt(tapGain()*combo())}earn(autoGain()*dt);if(now-renderAt>950)render()},200);
-setInterval(()=>{if(!document.hidden)save()},15000);document.addEventListener('visibilitychange',()=>{if(document.hidden){save();hiddenSince=Date.now()}else{const now=Date.now(),away=Math.max(0,(now-(hiddenSince??s.last))/1000);if(away>5){const gained=Math.floor(autoGain()*(away/60)*.7);earn(gained);if(gained>0)msg('오프라인 수익 +'+fmt(gained)+' 짬')}hiddenSince=null;lastFrame=now;render()}});window.addEventListener('pagehide',save);render();
+lastFrame=Date.now();setInterval(()=>{const now=Date.now(),dt=Math.min(5,(now-lastFrame)/1000);lastFrame=now;if(document.hidden)return;if(lastTap&&now-lastTap>650&&streak>0){streak=Math.max(0,streak-24*dt);updateComboUI();$('tapIncome').textContent=fmt(tapGain()*combo())}earn(autoGain()*dt);if(now-renderAt>950){render();maybeOpenStory()}},200);
+setInterval(()=>{if(!document.hidden)save()},15000);document.addEventListener('visibilitychange',()=>{if(document.hidden){save();hiddenSince=Date.now()}else{const now=Date.now(),away=Math.max(0,(now-(hiddenSince??s.last))/1000);if(away>5){const gained=Math.floor(autoGain()*(away/60)*.7);earn(gained);if(gained>0)msg('오프라인 수익 +'+fmt(gained)+' 짬')}hiddenSince=null;lastFrame=now;render()}});window.addEventListener('pagehide',save);render();setTimeout(maybeOpenStory,650);
 
 /* Account bridge: Firebase authentication and cloud sync are initialized separately. */
 window.pyegupAccount={

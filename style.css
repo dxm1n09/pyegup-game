@@ -220,3 +220,7 @@ html body .app .comboTrack,html body .app #comboFill,
 html body .app .friend-photo,html body .authGate .authCard{
  border-radius:0!important;
 }
+
+/* Screenshot-inspired Korean game typography. */
+@import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+html body,html body button,html body input,html body select,html body textarea,html body dialog{font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',sans-serif!important;letter-spacing:.015em}

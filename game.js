@@ -116,7 +116,7 @@ const fmt=n=>{
  return parts.join(' ');
 };
 const safe=n=>Number.isFinite(n)?Math.max(0,n):Number.MAX_VALUE;
-const level=()=>1+Math.floor(Math.sqrt(s.runEarned/25));
+const level=()=>s.tapLevel;
 const tapCost=()=>safe(Math.floor(10*Math.pow(1.18,s.tapLevel)));
 const friendCost=i=>safe(Math.floor(friendPrices[i]*Math.pow(1.18,s.friends[i])));
 const baseTap=()=>((s.tapLevel+1)*(s.tapLevel+2)/2+1);

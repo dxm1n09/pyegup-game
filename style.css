@@ -28,5 +28,5 @@ main{display:flex;flex-direction:column;gap:10px}
 @media(max-width:390px){.friend-photo{width:48px;height:57px;flex-basis:48px}}
 
 /* v1.5: 모든 친구 사진 스프라이트(4열×5행), 13번 차지훈 제외 */
-.friend-photo{width:64px;height:66px;flex:0 0 64px;background-image:url('assets/characters/friends-sprite.jpg');background-size:400% 500%;background-color:#e5e8ee;border-color:#e4bc6d;border-radius:12px}
+.friend-photo{width:64px;height:66px;flex:0 0 64px;background-image:url('assets/characters/friends-sprite.jpg?v=17');background-size:400% 500%;background-color:#e5e8ee;border-color:#e4bc6d;border-radius:12px}
 @media(max-width:390px){.friend-photo{width:49px;height:51px;flex-basis:49px}}

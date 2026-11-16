@@ -1,5 +1,5 @@
 'use strict';
-const KEY='pyegup-dorm-v2',OLD='pyegup-dorm-v1',OFFLINE=.00001,MAX_AWAY=8*3600;
+const KEY='pyegup-dorm-v2',OLD='pyegup-dorm-v1',OFFLINE=.7/60,MAX_AWAY=Number.MAX_SAFE_INTEGER;
 const $=id=>document.getElementById(id);
 const friendNames=['정태우','추주형','박지훈','정다민','노현승','이세민','홍석진','구준수','천재우','윤서준','이준영','윤지호','차지훈','조서현','송창빈','우도현','나단비'];
 const friendImages=friendNames.map((_,i)=>i+1);
@@ -321,9 +321,10 @@ $('storyClose').onclick=()=>{storyPage=null;renderStoryViewer()};
 $('storyPrev').onclick=()=>{if(storyPage&&storyPage.scene>0){storyPage.scene--;renderStoryViewer()}};
 $('storyNext').onclick=()=>{if(!storyPage)return;const idx=storyPage.chapter;if(storyPage.scene<storyChapters[idx].scenes.length-1){storyPage.scene++;renderStoryViewer()}else{if(!s.storyRead.includes(idx))s.storyRead.push(idx);storyPage=null;save();render();renderStoryViewer()}};
 $('resetBtn').onclick=()=>{if(!confirm('모든 게임 진행 상황을 초기화할까요?'))return;localStorage.removeItem(KEY);localStorage.removeItem(OLD);s=initial();$('settings').close();render();msg('게임을 초기화했습니다')};
-const away=Math.max(0,Math.min(MAX_AWAY,(Date.now()-s.last)/1000));if(away>10){const gained=Math.floor(autoGain()*away*OFFLINE);earn(gained);if(gained>0)msg('오프라인 수익 +'+fmt(gained)+' 짬 (0.001%)')}
-lastFrame=Date.now();setInterval(()=>{const now=Date.now(),dt=Math.min(5,(now-lastFrame)/1000);lastFrame=now;if(lastTap&&now-lastTap>650&&streak>0){streak=Math.max(0,streak-24*dt);updateComboUI();$('tapIncome').textContent=fmt(tapGain()*combo())}earn(autoGain()*dt);if(now-renderAt>950)render()},200);
-setInterval(save,15000);document.addEventListener('visibilitychange',()=>{if(document.hidden)save();else{const now=Date.now(),away=Math.max(0,Math.min(MAX_AWAY,(now-s.last)/1000));if(away>5)earn(Math.floor(autoGain()*away*OFFLINE));lastFrame=now;render()}});window.addEventListener('pagehide',save);render();
+const away=Math.max(0,Math.min(MAX_AWAY,(Date.now()-s.last)/1000));if(away>10){const gained=Math.floor(autoGain()*away*OFFLINE);earn(gained);if(gained>0)msg('오프라인 수익 +'+fmt(gained)+' 짬 (경과 분 × 0.7 × 초당 수익)')}
+let hiddenSince=document.hidden?Date.now():null;
+lastFrame=Date.now();setInterval(()=>{const now=Date.now(),dt=Math.min(5,(now-lastFrame)/1000);lastFrame=now;if(document.hidden)return;if(lastTap&&now-lastTap>650&&streak>0){streak=Math.max(0,streak-24*dt);updateComboUI();$('tapIncome').textContent=fmt(tapGain()*combo())}earn(autoGain()*dt);if(now-renderAt>950)render()},200);
+setInterval(()=>{if(!document.hidden)save()},15000);document.addEventListener('visibilitychange',()=>{if(document.hidden){save();hiddenSince=Date.now()}else{const now=Date.now(),away=Math.max(0,(now-(hiddenSince??s.last))/1000);if(away>5){const gained=Math.floor(autoGain()*(away/60)*.7);earn(gained);if(gained>0)msg('오프라인 수익 +'+fmt(gained)+' 짬')}hiddenSince=null;lastFrame=now;render()}});window.addEventListener('pagehide',save);render();
 
 /* Account bridge: Firebase authentication and cloud sync are initialized separately. */
 window.pyegupAccount={

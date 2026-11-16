@@ -347,7 +347,7 @@ setInterval(()=>{if(!document.hidden)save()},15000);document.addEventListener('v
 /* Account bridge: Firebase authentication and cloud sync are initialized separately. */
 window.pyegupAccount={
  getLocal:()=>{try{return JSON.parse(localStorage.getItem(KEY))}catch{return null}},
- loadCloud:data=>{if(!data||typeof data!=='object')return;localStorage.setItem(KEY,JSON.stringify(data));s=load();const away=Math.max(0,(Date.now()-s.last)/1000);if(away>10){const gained=Math.floor(autoGain()*(away/60)*.7);earn(gained);if(gained>0)msg('오프라인 수익 +'+fmt(gained)+' 짬')}s.last=Date.now();streak=0;lastFrame=Date.now();render()},
+ loadCloud:data=>{if(!data||typeof data!=='object')return;localStorage.setItem(KEY,JSON.stringify(data));s=load();const away=Math.max(0,(Date.now()-s.last)/1000);if(away>10){const gained=Math.floor(autoGain()*(away/60)*.7);earn(gained);if(gained>0)msg('오프라인 수익 +'+fmt(gained)+' 짬')}s.last=Date.now();streak=0;lastFrame=Date.now();render();setTimeout(maybeOpenStory,650)},
  resetForAccount:()=>{s=initial();streak=0;lastFrame=Date.now();render()},
  snapshot:()=>structuredClone(s),
  saveNow:()=>save()

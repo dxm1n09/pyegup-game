@@ -87,18 +87,24 @@ const storyChapters=[
 ['THE END...?','515호에서 시작된 3년의 기숙사 생활.\n\n수많은 사고를 거쳐 마침내 도달한 곳은 대학이 아니었다.\n\n바로 다시 고등학교 3학년이었다.\n\n그렇게 학교 역사상 가장 전설적인 폐급이 탄생했다.\n\n축하합니다! 3학년을 다시 시작할 자격을 획득했습니다.']]}
 ];
 
-const titles={growth:['성장','터치 강화와 자동 수익을 키우세요.'],friends:['친구','이전 친구 Lv.10 달성 시 다음 친구 해금'],zones:['학교 구역','구매 후 가치가 초당 상승합니다.'],collect:['수집품','수집품을 모으고 되팔 수 있습니다.'],gifts:['친구들의 선물','해당 친구 Lv.30 달성 시 구매 가능'],clubs:['동아리 지배','구매 후 판매 가치가 초당 상승합니다. 판매 후 정가로 재구매할 수 있습니다.'],places:['학교 주변 시설','보유하는 동안 판매 가치가 상승하며, 판매 후 정가로 재구매합니다.'],power:['학교 권력','보유 시 판매 가치가 초당 상승합니다.'],relics:['유물','확인된 유물 5종만 우선 수록'],prestige:['재입학','레벨을 초기화하고 영구 보너스를 얻습니다.']};
-const initial=()=>({money:0,total:0,runEarned:0,tapLevel:0,autoLevel:0,friends:Array(17).fill(0),zones:{},collect:{},gifts:[],clubs:[],places:[],power:[],assetBoughtAt:{clubs:{},places:{},power:{}},relics:[],prestiges:0,mana:0,taps:0,last:Date.now()});
+const titles={growth:['성장','터치 강화와 자동 수익을 키우세요.'],friends:['친구','이전 친구 Lv.10 달성 시 다음 친구 해금'],zones:['학교 구역','구매 후 가치가 초당 상승합니다.'],collect:['수집품','수집품을 모으고 되팔 수 있습니다.'],gifts:['친구들의 선물','해당 친구 Lv.30 달성 시 구매 가능'],clubs:['동아리 지배','구매 후 판매 가치가 초당 상승합니다. 판매 후 정가로 재구매할 수 있습니다.'],places:['학교 주변 시설','보유하는 동안 판매 가치가 상승하며, 판매 후 정가로 재구매합니다.'],power:['학교 권력','보유 시 판매 가치가 초당 상승합니다.'],relics:['유물','확인된 유물 5종만 우선 수록'],prestige:['재입학','레벨을 초기화하고 영구 보너스를 얻습니다.'],story:['스토리','레벨에 따라 이야기가 해금됩니다.'],achievements:['업적','달성 기록은 재입학해도 유지됩니다.'],encyclopedia:['도감','구매하거나 영입한 모든 종류의 기록입니다.'],ranking:['순위표','보유 짬과 보유 자산의 현재 시세를 합산합니다.']};
+const initial=()=>({money:0,total:0,runEarned:0,tapLevel:0,autoLevel:0,friends:Array(17).fill(0),zones:{},collect:{},gifts:[],clubs:[],places:[],power:[],assetBoughtAt:{clubs:{},places:{},power:{}},relics:[],prestiges:0,mana:0,taps:0,history:{friends:[],zones:[],collect:[],gifts:[],clubs:[],places:[],power:[],relics:[]},stats:{peakLevel:1,lifetimeTaps:0,peakCombo:0,sales:0},storyRead:[],achievements:[],last:Date.now()});
 function load(){let raw;try{raw=JSON.parse(localStorage.getItem(KEY))}catch{};let s=initial();if(raw&&typeof raw==='object'){
  for(const k of ['money','total','runEarned','tapLevel','autoLevel','prestiges','mana','taps','last'])if(Number.isFinite(raw[k])&&raw[k]>=0)s[k]=raw[k];
  if(Array.isArray(raw.friends))s.friends=s.friends.map((_,i)=>Number.isFinite(raw.friends[i])?Math.max(0,Math.floor(raw.friends[i])):0);
  for(const k of ['gifts','clubs','places','power','relics'])if(Array.isArray(raw[k]))s[k]=[...new Set(raw[k].filter(x=>Number.isInteger(x)&&x>=0&&x<({gifts:17,clubs:15,places:10,power:7,relics:5}[k])))];
  for(const k of ['clubs','places','power']){const src=raw.assetBoughtAt?.[k];for(const i of s[k])s.assetBoughtAt[k][i]=(src&&Number.isFinite(src[i])&&src[i]>0)?src[i]:(Number.isFinite(raw.last)?raw.last:Date.now());}
  for(const k of ['zones','collect'])if(raw[k]&&typeof raw[k]==='object')for(const [i,v] of Object.entries(raw[k]))if(Number.isInteger(+i)&&Number.isFinite(v)&&v>0)s[k][i]=v;
+ if(raw.history&&typeof raw.history==='object')for(const k of Object.keys(s.history))if(Array.isArray(raw.history[k]))s.history[k]=[...new Set(raw.history[k].filter(i=>Number.isInteger(i)&&i>=0&&i<({friends:17,zones:7,collect:7,gifts:17,clubs:15,places:10,power:7,relics:5}[k])))];
+ if(raw.stats&&typeof raw.stats==='object')for(const k of Object.keys(s.stats))if(Number.isFinite(raw.stats[k])&&raw.stats[k]>=0)s.stats[k]=raw.stats[k];
+ if(Array.isArray(raw.storyRead))s.storyRead=[...new Set(raw.storyRead.filter(i=>Number.isInteger(i)&&i>=0&&i<8))];
+ if(Array.isArray(raw.achievements))s.achievements=[...new Set(raw.achievements.filter(x=>typeof x==='string'&&x.length<60))];
+ s.stats.lifetimeTaps=Math.max(s.stats.lifetimeTaps,s.taps);
+
  }else{try{const old=JSON.parse(localStorage.getItem(OLD));if(old){s.money=Math.max(0,old.points||0);s.total=Math.max(0,old.totalEarned||0);s.runEarned=s.total;s.tapLevel=Math.max(0,old.tapUpgrades||0);s.autoLevel=Math.max(0,old.autoUpgrades||0);}}catch{}}
  return s;
 }
-let s=load(),tab='growth',lastFrame=Date.now(),lastTap=0,streak=0,renderAt=0;
+let s=load(),tab='growth',storyPage=null,collectionCategory='friends',lastFrame=Date.now(),lastTap=0,streak=0,renderAt=0;
 const fmt=n=>{if(!Number.isFinite(n))return '매우 큰 수';if(n<10000)return Math.floor(n).toLocaleString('ko-KR');const units=[[1e20,'해'],[1e16,'경'],[1e12,'조'],[1e8,'억'],[1e4,'만']];for(const [v,u] of units){if(n>=v){const a=n/v;return (a>=100?Math.floor(a).toLocaleString('ko-KR'):a>=10?a.toFixed(1):a.toFixed(2)).replace(/\.0+$/,'')+u}}return Math.floor(n).toLocaleString('ko-KR')};
 const safe=n=>Number.isFinite(n)?Math.max(0,n):Number.MAX_VALUE;
 const level=()=>1+Math.floor(Math.sqrt(s.runEarned/25));
@@ -112,8 +118,8 @@ const permanent=()=>1+s.prestiges*.1;
 const tapGain=()=>safe(Math.floor(baseTap()*friendTapBonus()*giftTapBonus()*bonusRelic('tap')*permanent()));
 const friendIncome=()=>s.friends.reduce((m,l,i)=>m+(l?friendPrices[i]/100*Math.pow(1.12,l-1)*l:0),0);
 const autoGain=()=>safe(Math.floor(friendIncome()*bonusRelic('auto')*permanent()));
-const assetRates={clubs:.02,places:.03,power:.05};
-const assetValue=(category,i,price)=>safe(price+price*assetRates[category]*Math.max(0,(Date.now()-(s.assetBoughtAt?.[category]?.[i]||Date.now()))/1000));
+const ASSET_RATE_PER_SECOND=.0000005; // 0.00005 percent of purchase price / second
+const assetValue=(category,i,price)=>safe(price+price*ASSET_RATE_PER_SECOND*Math.max(0,(Date.now()-(s.assetBoughtAt?.[category]?.[i]||Date.now()))/1000));
 const COMBO_LIMITS=[0,80,280,550,820];
 const combo=()=>streak>=820?1.5:streak>=550?1.4:streak>=280?1.3:streak>=80?1.2:1;
 function updateComboUI(){const tier=streak>=820?4:streak>=550?3:streak>=280?2:streak>=80?1:0;const low=COMBO_LIMITS[tier],high=COMBO_LIMITS[Math.min(4,tier+1)];const progress=tier===4?100:Math.max(0,Math.min(100,(streak-low)/(high-low)*100));$('comboTag').textContent='콤보 ×'+combo().toFixed(1);$('comboFill').style.width=progress+'%';$('comboNext').textContent=tier===4?'최대 콤보':'다음 ×'+(1.2+tier*.1).toFixed(1);}
@@ -129,12 +135,12 @@ function drawItems(){const el=$('items');el.replaceChildren();$('panelTitle').te
  addItem('정신 차리기 · Lv.'+s.tapLevel,'터치 기본 수익 '+fmt(baseTap())+' 짬','강화 '+fmt(tapCost()),()=>actionBuy(tapCost(),()=>s.tapLevel++,'정신 차리기'),s.money<tapCost());
 
  }else if(tab==='friends')friendNames.forEach((name,i)=>{const l=s.friends[i],unlocked=i===0||s.friends[i-1]>=10,price=friendCost(i);addItem(unlocked?(i+1)+'. '+name+' · Lv.'+l:(i+1)+'. ???',unlocked?`자동 수익 · Lv.20 터치 +${friendBonuses[i]}% · Lv.30 선물 해금`:'앞 친구 Lv.10 필요',unlocked?(l>0?'레벨업 ':'영입 ')+fmt(price):'🔒 미해금',()=>actionBuy(price,()=>s.friends[i]++,'친구 강화'),!unlocked||s.money<price,unlocked?friendImages[i]:'locked')});
- else if(tab==='zones')zoneNames.forEach((name,i)=>{const owned=s.zones[i],value=owned?zonePrices[i]+zoneRise[i]*Math.max(0,(Date.now()-owned)/1000):0;addItem(name,owned?'현재 매각 가치 '+fmt(value)+' 짬 · 초당 +'+fmt(zoneRise[i]):'구매가 '+fmt(zonePrices[i])+' 짬 · 초당 가치 +'+fmt(zoneRise[i]),owned?'매각 '+fmt(value):'구매 '+fmt(zonePrices[i]),()=>{if(owned){earn(value);delete s.zones[i];msg(name+' 매각 완료');save();render()}else actionBuy(zonePrices[i],()=>s.zones[i]=Date.now(),name+' 구매')},!owned&&s.money<zonePrices[i])});
- else if(tab==='collect')collectibleNames.forEach((name,i)=>{const owned=s.collect[i],value=owned?collectiblePrices[i]*(1.0001+Math.max(0,(Date.now()-owned)/1000)*.0000001):0;addItem(name,owned?'매각 가치 '+fmt(value)+' 짬':'구매가 '+fmt(collectiblePrices[i])+' 짬',owned?'매각 '+fmt(value):'구매 '+fmt(collectiblePrices[i]),()=>{if(owned){earn(value);delete s.collect[i];msg(name+' 매각 완료');save();render()}else actionBuy(collectiblePrices[i],()=>s.collect[i]=Date.now(),name+' 구매')},!owned&&s.money<collectiblePrices[i])});
+ else if(tab==='zones')zoneNames.forEach((name,i)=>{const owned=s.zones[i],value=owned?zonePrices[i]+zonePrices[i]*ASSET_RATE_PER_SECOND*Math.max(0,(Date.now()-owned)/1000):0;addItem(name,owned?'현재 매각 가치 '+fmt(value)+' 짬 · 초당 +'+fmt(zonePrices[i]*ASSET_RATE_PER_SECOND):'구매가 '+fmt(zonePrices[i])+' 짬 · 초당 가치 +'+fmt(zonePrices[i]*ASSET_RATE_PER_SECOND),owned?'매각 '+fmt(value):'구매 '+fmt(zonePrices[i]),()=>{if(owned){earn(value);delete s.zones[i];msg(name+' 매각 완료');save();render()}else actionBuy(zonePrices[i],()=>s.zones[i]=Date.now(),name+' 구매')},!owned&&s.money<zonePrices[i])});
+ else if(tab==='collect')collectibleNames.forEach((name,i)=>{const owned=s.collect[i],value=owned?collectiblePrices[i]*(1+Math.max(0,(Date.now()-owned)/1000)*ASSET_RATE_PER_SECOND):0;addItem(name,owned?'매각 가치 '+fmt(value)+' 짬 · 초당 +'+fmt(collectiblePrices[i]*ASSET_RATE_PER_SECOND):'구매가 '+fmt(collectiblePrices[i])+' 짬 · 초당 가치 +'+fmt(collectiblePrices[i]*ASSET_RATE_PER_SECOND),owned?'매각 '+fmt(value):'구매 '+fmt(collectiblePrices[i]),()=>{if(owned){earn(value);delete s.collect[i];msg(name+' 매각 완료');save();render()}else actionBuy(collectiblePrices[i],()=>s.collect[i]=Date.now(),name+' 구매')},!owned&&s.money<collectiblePrices[i])});
  else if(tab==='gifts')giftNames.forEach((name,i)=>{const owned=s.gifts.includes(i),unlock=s.friends[i]>=30;addItem(unlock?friendNames[i]+' · '+name:(i+1)+'. ???',unlock?`터치 보너스 +${giftBonuses[i]}%`:'??? · 해당 친구 Lv.30 달성 시 공개',!unlock?'???':owned?'보유 중':'구매 '+fmt(giftPrices[i]),()=>actionBuy(giftPrices[i],()=>s.gifts.push(i),name+' 획득'),owned||!unlock||s.money<giftPrices[i])});
  else if(tab==='clubs'||tab==='places'||tab==='power'){
  const names=tab==='clubs'?clubNames:tab==='places'?placeNames:powerNames,prices=tab==='clubs'?clubPrices:tab==='places'?placePrices:powerPrices;
- names.forEach((name,i)=>{const owned=s[tab].includes(i),price=prices[i],value=owned?assetValue(tab,i,price):price,rate=price*assetRates[tab];
+ names.forEach((name,i)=>{const owned=s[tab].includes(i),price=prices[i],value=owned?assetValue(tab,i,price):price,rate=price*ASSET_RATE_PER_SECOND;
  addItem(name,owned?'현재 판매 가치 '+fmt(value)+' 짬 · 초당 가치 +'+fmt(rate):'정가 '+fmt(price)+' 짬 · 초당 가치 +'+fmt(rate),owned?'판매 '+fmt(value):'구매 '+fmt(price),()=>{
  if(owned){earn(assetValue(tab,i,price));s[tab]=s[tab].filter(x=>x!==i);delete s.assetBoughtAt[tab][i];msg(name+' 판매 완료');save();render()}
  else actionBuy(price,()=>{s[tab].push(i);s.assetBoughtAt[tab][i]=Date.now()},name+' 구매');

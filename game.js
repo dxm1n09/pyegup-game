@@ -2,7 +2,7 @@
 const KEY='pyegup-dorm-v2',OLD='pyegup-dorm-v1',OFFLINE=.07,MAX_AWAY=8*3600;
 const $=id=>document.getElementById(id);
 const friendNames=['정태우','추주형','박지훈','정다민','노현승','이세민','홍석진','구준수','천재우','윤서준','이준영','윤지호','차지훈','조서현','송창빈','우도현','나단비'];
-const friendImages=friendNames.map((_,i)=>i<10?i+1:null);
+const friendImages=friendNames.map((_,i)=>i===12?null:i+1);
 const friendPrices=[1e4,5e4,1e5,5e5,1e6,5e6,1e7,5e7,1e8,1e10,5e10,1e11,1e12,1e13,1e14,1e15,5e17];
 const friendBonuses=[5,7,10,14,19,25,40,80,200,600,1000,1500,2000,2500,3000,4000,5000];
 const giftNames=['크레이지 111에서 훔친 축구화','현대청운중에서 훔친 축구공','샘성에서 훔친 노트북','치과에서 훔친 치아 미백제','윤서준 사물함에서 훔친 가글린','천재우 신발장에서 훔친 깔창','다잇소에서 훔친 가발','안방 화장실에서 훔쳐온 제모크림','이세민 기숙사에서 훔친 키높이 신발','박태양 옷장에서 훔친 옷','여기저기서 훔친 여자의 마음','지성쌤한테 뜯어온 농구공','한의원에서 훔친 키크는 약','입마개','조상한테 뺏긴 남고딩 영혼','여자 정독실에서 훔친 베개','진수의 마음'];
@@ -49,7 +49,7 @@ function spend(n){if(!Number.isFinite(n)||s.money<n)return false;s.money=Math.ma
 function msg(t){$('message').textContent=t}
 function save(){s.last=Date.now();try{localStorage.setItem(KEY,JSON.stringify(s));msg('저장 완료')}catch{msg('저장 공간 부족: 내보내기를 이용하세요')}}
 function countOwned(k){return k==='friends'?s.friends.filter(x=>x>0).length:k==='zones'||k==='collect'?Object.keys(s[k]).length:(s[k]?.length||0)}
-function addItem(name,description,buttonText,onClick,disabled=false,imageSrc=null){const row=document.createElement('div');row.className='item';const info=document.createElement('div');info.className='iteminfo';const title=document.createElement('strong');title.textContent=name;const p=document.createElement('p');p.textContent=description;info.append(title,p);if(imageSrc){const photo=document.createElement('span');photo.className='friend-photo';photo.style.backgroundPosition=`${((imageSrc-1)%5)*25}% ${imageSrc<=5?0:100}%`;photo.setAttribute('role','img');photo.setAttribute('aria-label',friendNames[imageSrc-1]+' 사진');row.append(photo)}const b=document.createElement('button');b.textContent=buttonText;b.disabled=disabled;b.addEventListener('click',onClick);row.append(info,b);$('items').append(row)}
+function addItem(name,description,buttonText,onClick,disabled=false,imageSrc=null){const row=document.createElement('div');row.className='item';const info=document.createElement('div');info.className='iteminfo';const title=document.createElement('strong');title.textContent=name;const p=document.createElement('p');p.textContent=description;info.append(title,p);if(imageSrc){const photo=document.createElement('span');photo.className='friend-photo';photo.style.backgroundPosition=`${((imageSrc-1)%4)*100/3}% ${Math.floor((imageSrc-1)/4)*25}%`;photo.setAttribute('role','img');photo.setAttribute('aria-label',friendNames[imageSrc-1]+' 사진');row.append(photo)}const b=document.createElement('button');b.textContent=buttonText;b.disabled=disabled;b.addEventListener('click',onClick);row.append(info,b);$('items').append(row)}
 function actionBuy(price,callback,label){if(!spend(price)){msg('짬이 부족합니다');return}callback();msg(label+' 완료!');save();render()}
 function drawItems(){const el=$('items');el.replaceChildren();$('panelTitle').textContent=titles[tab][0];$('panelSub').textContent=titles[tab][1];$('panelCount').textContent=tab==='growth'||tab==='prestige'?'':countOwned(tab)+' / '+({friends:17,zones:7,collect:7,gifts:17,clubs:15,places:10,power:7,relics:5}[tab]||0);
  if(tab==='growth'){
